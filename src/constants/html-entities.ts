@@ -1,0 +1,68 @@
+/** Use these characters directly in JSX, strings, labels and messages. */
+export const TEXT_SYMBOLS = {
+  HYPHEN: '-',
+  EN_DASH: '\u2013',
+  EM_DASH: '\u2014',
+  MINUS: '\u2212',
+  APOSTROPHE: '\u0027',
+  LEFT_SINGLE_QUOTE: '\u2018',
+  RIGHT_SINGLE_QUOTE: '\u2019',
+  QUOTATION_MARK: '\u0022',
+  LEFT_DOUBLE_QUOTE: '\u201C',
+  RIGHT_DOUBLE_QUOTE: '\u201D',
+  ELLIPSIS: '\u2026',
+  BULLET: '\u2022',
+  MIDDLE_DOT: '\u00B7',
+  AMPERSAND: '&',
+  LESS_THAN: '<',
+  GREATER_THAN: '>',
+  NON_BREAKING_SPACE: '\u00A0',
+  COPYRIGHT: '\u00A9',
+  REGISTERED: '\u00AE',
+  TRADEMARK: '\u2122',
+  DEGREE: '\u00B0',
+  PLUS_MINUS: '\u00B1',
+  MULTIPLICATION: '\u00D7',
+  DIVISION: '\u00F7',
+  EURO: '\u20AC',
+  POUND: '\u00A3',
+  YEN: '\u00A5',
+  CENT: '\u00A2',
+} as const
+
+export type HtmlSymbol = keyof typeof TEXT_SYMBOLS
+
+/**
+ * Encoded representations for HTML source generation.
+ * React renders entity strings literally: use TEXT_SYMBOLS for JSX instead.
+ */
+export const HTML_ENTITIES = {
+  HYPHEN: '&#45;',
+  EN_DASH: '&ndash;',
+  EM_DASH: '&mdash;',
+  MINUS: '&minus;',
+  APOSTROPHE: '&#39;',
+  LEFT_SINGLE_QUOTE: '&lsquo;',
+  RIGHT_SINGLE_QUOTE: '&rsquo;',
+  QUOTATION_MARK: '&quot;',
+  LEFT_DOUBLE_QUOTE: '&ldquo;',
+  RIGHT_DOUBLE_QUOTE: '&rdquo;',
+  ELLIPSIS: '&hellip;',
+  BULLET: '&bull;',
+  MIDDLE_DOT: '&middot;',
+  AMPERSAND: '&amp;',
+  LESS_THAN: '&lt;',
+  GREATER_THAN: '&gt;',
+  NON_BREAKING_SPACE: '&nbsp;',
+  COPYRIGHT: '&copy;',
+  REGISTERED: '&reg;',
+  TRADEMARK: '&trade;',
+  DEGREE: '&deg;',
+  PLUS_MINUS: '&plusmn;',
+  MULTIPLICATION: '&times;',
+  DIVISION: '&divide;',
+  EURO: '&euro;',
+  POUND: '&pound;',
+  YEN: '&yen;',
+  CENT: '&cent;',
+} as const satisfies Record<HtmlSymbol, string>
