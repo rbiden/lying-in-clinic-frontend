@@ -1,5 +1,5 @@
 import { Link, matchPath, useLocation } from 'react-router'
-import { LayoutDashboard, LogOut, Warehouse } from 'lucide-react'
+import { Baby, LayoutDashboard, LogOut } from 'lucide-react'
 import { useAuthStore, useLogoutMutation } from '@/features/auth'
 import { authRoutes } from '#/features/auth/auth.routes'
 import { getSidebarItems } from '#/routes/sidebar'
@@ -52,7 +52,7 @@ export const Sidebar = () => {
           className="flex items-center gap-3 rounded-xl p-2 focus-visible:outline-ring group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0"
           aria-label="Inventory Management System home"
         >
-          <Warehouse className="size-5 shrink-0 text-primary" />
+          <Baby className="size-5 shrink-0 text-primary" aria-hidden="true" />
           <span className="text-base font-heading font-bold group-data-[collapsible=icon]:hidden">
             Inventory
           </span>
@@ -85,7 +85,7 @@ export const Sidebar = () => {
                           side="right"
                           triggerClassName="w-full min-w-0 text-left group-data-[collapsible=icon]:size-8"
                         >
-                          <div className="flex w-full items-center gap-2 rounded-md border border-transparent px-3 py-2 text-gray-300 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0">
+                          <div className="flex w-full items-center gap-2 rounded-md border border-transparent px-3 py-2 text-muted-foreground/60 group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0">
                             <Icon
                               className="size-4 shrink-0"
                               aria-hidden="true"
@@ -110,7 +110,7 @@ export const Sidebar = () => {
                           aria-current={isActive ? 'page' : undefined}
                           onClick={() => setOpenMobile(false)}
                           className={cn(
-                            'h-10 rounded-md border text-muted-foreground border-transparent font-medium hover:bg-gray-100 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0',
+                            'h-10 rounded-md border text-muted-foreground border-transparent font-medium hover:bg-muted group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0',
                             isActive &&
                               'bg-primary/10! ring-1 ring-primary/30 border-border text-primary! font-semibold',
                           )}

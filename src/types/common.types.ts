@@ -26,8 +26,11 @@ export interface BaseFieldProps extends BaseClassNameProps {
   disabled?: boolean
 }
 
+/** Semantic status colours shared by buttons, badges, menus and dialogs. */
+export type StatusVariant = 'destructive' | 'success' | 'warning' | 'info'
+
 export type ActionVariant =
-  'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  'default' | 'outline' | 'secondary' | 'ghost' | 'link' | StatusVariant
 
 export interface ActionProps {
   label: ReactNode

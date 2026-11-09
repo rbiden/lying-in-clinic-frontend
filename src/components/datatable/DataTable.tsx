@@ -14,14 +14,15 @@ import {
   ArrowUp,
   ArrowUpDown,
   GalleryVerticalEnd,
-  Warehouse,
+  CalendarDays,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { columnSortField } from '@/helpers/table-query'
-import type { DataTableProps } from '@/types/datatable.types'
+import type { DataTableColumn, DataTableProps } from '@/types/datatable.types'
 import { Checkbox } from '../ui/Checkbox'
 import { Button } from '../ui/Button'
 import { DataTablePagination } from './DataTablePagination'
+import { DataTableActions } from './DataTableActions'
 
 const interactive =
   'a,button,input,select,textarea,[role="button"],[role="checkbox"],[data-table-interactive]'
@@ -29,26 +30,33 @@ const interactive =
 export function DataTable<TData>({
   rows,
   columns,
+  actions,
+  actionType = 'dropdown',
   totalCount = 0,
   table: controller,
   clientSide = false,
   search = '',
   filterRow,
   getRowId,
+  getRowClassName,
   selectedIds,
   onSelectionChange,
   canSelectRow,
+  canBulkSelectRow,
+  selectionDisabled = false,
   onRowClick,
   isLoading = false,
   isFetching = false,
+  showPagination = true,
   error,
   onRetry,
   emptyContent,
   errorContent,
   caption = 'Data table',
   className,
+  cellClassName,
 }: DataTableProps<TData>) {
-  const { state, setPage, setSort } = controller
+  const { state, setPage, setSort, resetFilters } = controller
   const filteredRows = useMemo(
     () => (clientSide && filterRow ? rows.filter(filterRow) : rows),
     [clientSide, filterRow, rows],
@@ -66,7 +74,29 @@ export function DataTable<TData>({
   )
 
   const tableColumns = useMemo<ColumnDef<TData>[]>(() => {
-    if (!selectionEnabled) return columns
+    const displayColumns: ColumnDef<TData>[] = actions?.length
+      ? [
+          ...columns,
+          {
+            id: '__actions',
+            header: 'Actions',
+            enableSorting: false,
+            enableGlobalFilter: false,
+            cell: ({ row }) => (
+              <DataTableActions
+                row={row.original}
+                rowId={row.id}
+                actions={actions}
+                actionType={actionType}
+                disabled={busy || hasError}
+              />
+            ),
+          },
+        ]
+      : columns
+
+    if (!selectionEnabled) return displayColumns
+
     return [
       {
         id: '__selection',
@@ -74,14 +104,18 @@ export function DataTable<TData>({
         header: ({ table: instance }) => {
           const eligible = instance
             .getRowModel()
-            .rows.filter((row) => row.getCanSelect())
+            .rows.filter(
+              (row) =>
+                row.getCanSelect() &&
+                (canBulkSelectRow?.(row.original) ?? true),
+            )
           const all =
             eligible.length > 0 && eligible.every((row) => row.getIsSelected())
           const some = eligible.some((row) => row.getIsSelected())
           return (
             <Checkbox
               aria-label="Select all selectable rows on this page"
-              disabled={busy || eligible.length === 0}
+              disabled={busy || selectionDisabled || eligible.length === 0}
               checked={all}
               indeterminate={some && !all}
               onCheckedChange={(checked) => {
@@ -95,23 +129,36 @@ export function DataTable<TData>({
             />
           )
         },
-        cell: ({ row }) => (
-          <Checkbox
-            aria-label={`Select row ${row.id}`}
-            disabled={busy || !row.getCanSelect()}
-            checked={row.getIsSelected()}
-            onCheckedChange={(checked) => {
-              const ids = new Set(selectedIds)
-              if (checked) ids.add(row.id)
-              else ids.delete(row.id)
-              onSelectionChange([...ids])
-            }}
-          />
-        ),
+        cell: ({ row }) =>
+          row.getCanSelect() ? (
+            <Checkbox
+              aria-label={`Select row ${row.id}`}
+              disabled={busy || selectionDisabled}
+              checked={row.getIsSelected()}
+              className="border-input"
+              onCheckedChange={(checked) => {
+                const ids = new Set(selectedIds)
+                if (checked) ids.add(row.id)
+                else ids.delete(row.id)
+                onSelectionChange([...ids])
+              }}
+            />
+          ) : null,
       },
-      ...columns,
+      ...displayColumns,
     ]
-  }, [columns, selectionEnabled, busy, selectedIds, onSelectionChange])
+  }, [
+    columns,
+    actions,
+    actionType,
+    selectionEnabled,
+    busy,
+    hasError,
+    selectedIds,
+    onSelectionChange,
+    canBulkSelectRow,
+    selectionDisabled,
+  ])
 
   const sorting: SortingState = useMemo(() => {
     if (!state.sortField || !state.sortType) return []
@@ -156,7 +203,12 @@ export function DataTable<TData>({
     enableRowSelection: (row) =>
       selectionEnabled && (canSelectRow?.(row.original) ?? true),
     state: {
-      pagination: { pageIndex: state.page - 1, pageSize: state.limit },
+      pagination: {
+        pageIndex: showPagination ? state.page - 1 : 0,
+        pageSize: showPagination
+          ? state.limit
+          : Math.max(filteredRows.length, 1),
+      },
       sorting,
       rowSelection,
       globalFilter: search,
@@ -171,11 +223,14 @@ export function DataTable<TData>({
       setSort(field, next.desc ? 'desc' : 'asc')
     },
   })
+
   const matchingCount = clientSide
     ? table.getFilteredRowModel().rows.length
     : totalCount
+
   const visibleRows = table.getRowModel().rows
   const previousFilter = useRef({ search, filterRow, clientSide })
+
   useEffect(() => {
     const previous = previousFilter.current
     previousFilter.current = { search, filterRow, clientSide }
@@ -199,8 +254,10 @@ export function DataTable<TData>({
     state.limit,
     setPage,
   ])
+
   const leafCount = table.getVisibleLeafColumns().length
   const showSkeleton = isLoading && rows.length === 0
+  const showFetchingShimmer = busy && rows.length > 0
 
   return (
     <section
@@ -208,11 +265,16 @@ export function DataTable<TData>({
       aria-label={caption}
       aria-busy={busy}
     >
-      <div className={cn('relative', (busy || hasError) && 'min-h-60')}>
-        <div className="overflow-x-auto bg-white/20 rounded-2xl p-2 border border-border">
+      <div className={cn('relative')}>
+        <div
+          className={cn(
+            'overflow-x-auto bg-card h-full rounded-2xl p-1 border border-border',
+            hasError && !busy && 'min-h-70',
+          )}
+        >
           <table className="w-full text-left text-sm">
             <caption className="sr-only">{caption}</caption>
-            <thead className="border-b border-border text-sm font-heading text-muted-foreground">
+            <thead className="border-b border-border text-sm font-heading text-foreground">
               {table.getHeaderGroups().map((group) => (
                 <tr key={group.id}>
                   {group.headers.map((header) => {
@@ -232,8 +294,10 @@ export function DataTable<TData>({
                             : undefined
                         }
                         className={cn(
-                          'whitespace-nowrap px-4 py-3 font-medium',
+                          'whitespace-nowrap p-3 text-center font-medium first:text-start last:text-end only:text-start',
                           header.column.id === '__selection' && 'w-12',
+                          (header.column.columnDef as DataTableColumn<TData>)
+                            .headerClassName,
                         )}
                       >
                         {!header.isPlaceholder &&
@@ -301,6 +365,7 @@ export function DataTable<TData>({
                         'transition-colors hover:bg-muted/30 data-selected:bg-primary/5',
                         rowClickable &&
                           'cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring',
+                        getRowClassName?.(row.original),
                       )}
                       onClick={(event) => {
                         if (
@@ -322,17 +387,31 @@ export function DataTable<TData>({
                         onRowClick?.(row.original)
                       }}
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="whitespace-nowrap px-4 py-3"
-                        >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      ))}
+                      {row.getVisibleCells().map((cell) => {
+                        const columnCellClassName = (
+                          cell.column.columnDef as DataTableColumn<TData>
+                        ).cellClassName
+
+                        return (
+                          <td
+                            key={cell.id}
+                            className={cn(
+                              'whitespace-nowrap px-3 py-1.5 text-center first:text-start last:text-end only:text-start',
+                              typeof cellClassName === 'function'
+                                ? cellClassName(row.original)
+                                : cellClassName,
+                              typeof columnCellClassName === 'function'
+                                ? columnCellClassName(row.original)
+                                : columnCellClassName,
+                            )}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </td>
+                        )
+                      })}
                     </tr>
                   ))}
 
@@ -342,7 +421,19 @@ export function DataTable<TData>({
                     colSpan={Math.max(1, leafCount)}
                     className="px-4 py-12 text-center text-muted-foreground"
                   >
-                    {emptyContent ?? 'No records found.'}
+                    <div className="flex flex-col w-full items-center justify-center gap-2">
+                      {emptyContent ?? 'No records found.'}
+                      {resetFilters && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={resetFilters}
+                          disabled={busy || hasError}
+                        >
+                          Clear Filters
+                        </Button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               )}
@@ -353,7 +444,7 @@ export function DataTable<TData>({
         {hasError && !busy && (
           <div
             role="alert"
-            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/90 p-6 text-center backdrop-blur-[1px]"
+            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]"
           >
             <div className="relative mb-4 flex size-16 shrink-0 items-center justify-center">
               <div
@@ -378,9 +469,20 @@ export function DataTable<TData>({
           </div>
         )}
 
-        {busy && (
+        {showFetchingShimmer && (
           <div
-            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/90 p-6 text-center backdrop-blur-[1px]"
+            className="pointer-events-none absolute inset-0 z-10 overflow-hidden rounded-2xl backdrop-blur-[1px] bg-muted/30 motion-safe:animate-pulse"
+            aria-hidden="true"
+          >
+            <div className="absolute inset-x-0 top-0 h-0.5 overflow-hidden bg-primary/15">
+              <div className="h-full w-1/3 rounded-full bg-primary/70 motion-safe:animate-[datatable-loading_1.5s_ease-in-out_infinite] motion-reduce:w-full" />
+            </div>
+          </div>
+        )}
+
+        {busy && rows.length === 0 && (
+          <div
+            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]"
             role="status"
             aria-live="polite"
           >
@@ -390,23 +492,25 @@ export function DataTable<TData>({
                 aria-hidden="true"
               />
               <div className="flex size-10 items-center justify-center rounded-xl border border-primary/20 bg-card text-primary shadow-sm">
-                <Warehouse className="size-5" aria-hidden="true" />
+                <CalendarDays className="size-5" aria-hidden="true" />
               </div>
             </div>
             <p className="font-heading text-lg font-semibold text-foreground">
-              {showSkeleton ? 'Loading records' : 'Updating records'}
+              Loading records
             </p>
             <p className="mt-2 text-sm text-muted-foreground">Please wait…</p>
           </div>
         )}
       </div>
-      <DataTablePagination
-        state={state}
-        totalCount={matchingCount}
-        rowCount={visibleRows.length}
-        disabled={busy}
-        setPage={setPage}
-      />
+      {showPagination && (
+        <DataTablePagination
+          state={state}
+          totalCount={matchingCount}
+          rowCount={visibleRows.length}
+          disabled={busy}
+          setPage={setPage}
+        />
+      )}
     </section>
   )
 }

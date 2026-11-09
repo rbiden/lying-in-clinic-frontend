@@ -13,8 +13,8 @@ export const AuthAtmosphere = ({
     aria-hidden="true"
   >
     <div className="absolute -top-48 -right-32 size-160 rounded-full bg-primary/10 blur-[120px]" />
-    <div className="absolute top-1/2 -left-48 size-128 rounded-full bg-emerald-500/5 blur-[120px]" />
-    <div className="absolute -right-24 -bottom-48 size-144 rounded-full bg-amber-500/10 blur-[130px]" />
+    <div className="absolute top-1/2 -left-48 size-128 rounded-full bg-primary/5 blur-[120px]" />
+    <div className="absolute -right-24 -bottom-48 size-144 rounded-full bg-muted-foreground/10 blur-[130px]" />
 
     <div
       className="absolute inset-0 text-primary/10 mask-[radial-gradient(ellipse_at_top_right,black_15%,transparent_90%)]"

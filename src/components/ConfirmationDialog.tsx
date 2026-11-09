@@ -5,6 +5,13 @@ import { Button, Modal } from '@/components'
 import { useConfirmationStore, useLoadingStore } from '@/stores'
 import { cn } from '@/lib'
 
+// The icon follows the confirm action's status colour; other variants keep the destructive warning look.
+const ICON_TONE = {
+  success: 'bg-success/10 text-success',
+  warning: 'bg-warning/10 text-warning',
+  info: 'bg-info/10 text-info',
+} as const
+
 export const ConfirmationDialog = () => {
   const isOpen = useConfirmationStore((state) => state.isOpen)
   const dialog = useConfirmationStore((state) => state.dialog)
@@ -42,6 +49,10 @@ export const ConfirmationDialog = () => {
   }
 
   const Icon = activeDialog.icon || AlertTriangle
+  const iconTone =
+    activeDialog.variant && activeDialog.variant in ICON_TONE
+      ? ICON_TONE[activeDialog.variant as keyof typeof ICON_TONE]
+      : 'bg-destructive/10 text-destructive'
   const size = activeDialog.size || 'sm'
   const sizeClass =
     size === 'sm'
@@ -66,8 +77,8 @@ export const ConfirmationDialog = () => {
             activeDialog.headerClassName,
           )}
         >
-          <span className="p-3 rounded-full bg-red-50 mx-auto">
-            <Icon className="text-destructive size-9" />
+          <span className={cn('p-3 rounded-full mx-auto', iconTone)}>
+            <Icon className="size-9" />
           </span>
           <span
             className={cn(

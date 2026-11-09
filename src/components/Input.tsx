@@ -132,7 +132,7 @@ export const Input = ({
           inputGroupClassName,
           showDirty &&
             isDirty &&
-            'bg-amber-50/80 border-amber-300 ring-1 ring-amber-300/40',
+            'bg-warning/5 border-warning/40 ring-1 ring-warning/25',
         )}
       >
         {Boolean(prefix) && (

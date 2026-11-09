@@ -55,7 +55,7 @@ export const AuthLayout = ({ className }: AuthLayoutProps) => {
         <header className="relative z-10 flex min-h-14 items-center justify-between gap-2 border-b bg-background/70 px-4 py-2 backdrop-blur-md">
           <Breadcrumbs items={breadcrumbs} currentPath={currentPath} />
 
-          <span className="rounded-full border border-gray-300 p-2">
+          <span className="rounded-full border border-input p-2">
             <UserRound className="size-4" />
           </span>
         </header>

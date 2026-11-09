@@ -185,3 +185,46 @@ No additional product requirements or implementation scope are inferred from the
 - Mandatory requirement (2026-10-14): Display DataTable errors as a table overlay, like loading.
 
 - Mandatory requirement (2026-10-14): Redesign DataTable overlays to match LoadingScreen.
+
+### Impeccable Init (2026-11-09)
+
+- Explicit request: run Impeccable init to capture durable product context in PRODUCT.md.
+- Product identity, intended users, and workflows await confirmation; existing inventory/POS copy is not accepted as clinic product truth.
+
+### Impeccable Init: Confirmed Product Requirements (2026-11-09)
+
+- Confirmation supersedes the waiting note above. The product is Lying In Clinic, a web application for the clinic administrator and authorized staff, including midwives and clinicians. Staff assist patients; the initial version has no patient portal or public registration.
+- Mandatory administration: manage staff and permissions, clinical catalogs, rooms/beds, facility availability, clinic settings, and audit logs.
+- Mandatory clinical work: find/register patients, review history/allergies, create encounters, assess priority, record vitals/diagnoses/clinical notes, and provide pregnancy-related care. Authorized staff admit patients, assign/transfer beds, record facility usage, discharge/refer patients, and confirm cleaning according to permissions.
+- Mandatory workflows: search before registration; returning patients review history before a new encounter; outpatient care without admission/bed; admission -> available bed -> care -> discharge/transfer -> cleaning -> available.
+- Mandatory integrity: preserve visits, pregnancy episodes, bed assignments, priority reassessments, and finalized notes. Prevent duplicate active admissions and double allocation. Automatically audit mutations; all application mutations must use database transactions.
+- Mandatory technical constraints: React, TypeScript, shadcn/ui, Laravel REST API without Inertia, MySQL, Hostinger Premium target, and Asia/Manila display dates/times. Preserve existing login/audit functionality. Require Laravel Sanctum HttpOnly session cookies with CSRF protection; implementation and hosting compatibility are not verified by init.
+- Confirmed usability requirements: desktop/laptop primary, responsive tablet and usable mobile, keyboard operation, visible focus, readable text/contrast, explicit labels/validation, status beyond color, and loading/empty/error/success states. No hardware or further language requirement is confirmed; use plain English and clinic-friendly wording.
+- Confirmed experience priorities: minimal task-focused dashboard, patient search, quick check-in, admission on one screen, and clear room/bed availability. Preserve login/audit, then replace dashboard/user placeholders with functional screens.
+- Documentation/config scope only: capture confirmed truth in PRODUCT.md, save the chosen workflow setting in shared Impeccable config, and configure the Vite live entry. No application implementation is authorized by this init completion.
+- Open decisions: detailed permissions, clinical catalogs/API contracts, and hosting compatibility. Legacy POS/inventory copy and placeholder clinic data are not product evidence.
+
+### DataTable Port (2026-11-09)
+
+- Explicitly authorized: locate local faculty-evaluation-frontend and implement its DataTable, hooks, helpers, and necessary supporting files here; install required libraries if missing.
+- Preserve unrelated working edits and existing login/audit functionality. Source repository is read-only for this port.
+
+
+### Impeccable Init: Product Update (2026-11-09)
+
+- Supersedes the "Open decisions" line under the earlier init record for permissions, catalogs and hosting:
+  - Mandatory role model: two roles. Admin manages staff/permissions, catalogs, rooms/beds, facility availability, settings and audit logs. Clinical is one shared role for all other staff (midwives, clinicians) covering registration, care, admission, bed assignment/transfer, discharge/referral and cleaning confirmation.
+  - Mandatory catalogs, maintained by Admin: diagnoses; services and procedures; room and bed types.
+  - Hosting: Hostinger Premium confirmed compatible by the user (not verified from the repository).
+- Confirmed positioning: small-clinic simplicity (fewer screens, direct workflows, low training burden).
+- Mandatory brand requirement: all user-facing copy, including the login page and the browser title, uses the Lying In Clinic name; remove the leftover inventory/POS wording.
+- Still open: catalog and workflow API contracts; diagnosis code set (standard vs clinic-defined); whether a medicines catalog is needed.
+- Scope: PRODUCT.md and records only. No application code changed.
+
+### Theme, Fonts, Icon and Status Colours (2026-11-09)
+
+- Mandatory: the product has no dark theme or dark mode. Supersedes the `.dark` theme recorded in the first DESIGN.md.
+- Mandatory: restyle components whose theme does not match, without changing their expected behaviour or output.
+- Mandatory fonts: Fraunces for titles and headers; Nunito as the primary app font. Remove the unused Geist, IBM Plex Sans and Merriweather fonts (Inter, the previous primary, is replaced too).
+- Requested: update the legacy icon. Assumption (not confirmed by the user): the brand mark is the Lucide `Baby` icon, also used for the favicon.
+- Requested: add the status colour scheme to all components with colour variants.

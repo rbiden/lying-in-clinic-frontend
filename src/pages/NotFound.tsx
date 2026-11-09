@@ -1,5 +1,5 @@
 import { Link } from 'react-router'
-import { ArrowRight, PackageSearch } from 'lucide-react'
+import { ArrowRight, SearchX } from 'lucide-react'
 import { Button } from '../components/ui/Button'
 import { AuthAtmosphere } from '../components/background/AuthAtmosphere'
 
@@ -16,9 +16,9 @@ export const NotFound = () => {
             404
           </span>
           <div className="absolute flex size-20 rotate-[-8deg] items-center justify-center rounded-3xl border border-primary/15 bg-card/90 text-primary shadow-xl shadow-primary/10 backdrop-blur-sm sm:size-22">
-            <PackageSearch className="size-12" strokeWidth={1.25} />
+            <SearchX className="size-12" strokeWidth={1.25} />
           </div>
-          <div className="absolute top-8 right-10 size-3 rounded-full bg-amber-400/70 sm:right-8" />
+          <div className="absolute top-8 right-10 size-3 rounded-full bg-muted-foreground/50 sm:right-8" />
           <div className="absolute bottom-6 left-12 size-2 rounded-full bg-primary/40 sm:left-8" />
         </div>
 

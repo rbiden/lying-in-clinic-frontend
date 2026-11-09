@@ -409,3 +409,30 @@ For authorized work, record outcome, status, priority, requirement/decision link
 - Error overlay (2026-10-14): completed; custom error content and retry preserved. All 89 tests, lint/build passed; edited formatting and diff checks run. Existing typecheck baseline unchanged; browser visual verification not performed.
 
 - Overlay redesign (2026-10-14): completed matching loading/error presentation to LoadingScreen. 89 tests, lint/build passed; edited format/diff checks run. No browser visual verification; existing typecheck baseline remains.
+
+### Impeccable Init (2026-11-09)
+
+- Status: awaiting product interview answers. Read-only inspection found inventory/POS branding, working auth/audit integration, and placeholder dashboard/user pages; clinic purpose is unconfirmed.
+- Validation: context launcher succeeded; repository/source inspection only. No application code changed or application tests run.
+- Next action: use confirmed answers to write PRODUCT.md and record the selected workflow; configure live entry when applicable.
+
+### Impeccable Init: Completion (2026-11-09)
+
+- Supersedes the waiting status above: product interview answers are confirmed and recorded in PRODUCT.md. Created shared code-first workflow configuration and live-entry configuration for index.html; preserved the local configuration and existing working changes.
+- Scope: documentation/configuration only. No application code, backend, CSP source, or visual-world record changed; no server was launched.
+- Validation passed: both JSON files parse; the selected workflow and live-config values match the confirmed choices; PRODUCT.md has schema 1 and platform `web`; the workflow setting is absent from PRODUCT.md; index.html contains the insertion anchor; scoped `git diff --check` is clean. Git ignore checks confirm the new shared records remain trackable and config.local.json remains ignored. Application tests are not applicable to this documentation/configuration change and were not run.
+- Unresolved: detailed role permissions, clinical catalogs/API contracts, and Hostinger compatibility. The current frontend has auth/audit integration and placeholder dashboard/user pages, not verified clinic workflows or verified Sanctum/backend behavior.
+- Next action: choose a scoped dashboard or user-management task, resolve its contracts and permissions, then plan before application implementation. Live visual iteration can be started separately when requested.
+
+### DataTable Sync From faculty-evaluation-frontend (2026-11-09)
+
+- Status: implemented. Updated DataTable, DataTablePagination, datatable types, table-query helpers, useTableQuery/useTableState and the README; added DataTableActions, Dropdown, ui/dropdown-menu, helpers/list-return, the `datatable-loading` keyframe in index.css, and barrel exports.
+- Validation: `npm test` 147/147 passed; ESLint and Prettier clean on changed files. Typecheck shows no errors in changed files; remaining errors are pre-existing from the in-progress shadcn UI changes (lowercase `ui/button`/`ui/tooltip` imports, `scroll-area`, `DateTimePicker`, `Tooltip`) and `routes/navigation.test.ts`. Production build passes (existing chunk-size warning only). Browser verification not run.
+- Next action: fix the casing conflicts in `ui/sheet`, `ui/sidebar`, `ui/toast`, `ui/calendar` imports, then check row actions, the Clear Filters button and the loading shimmer in the Audit Logs page.
+
+### Light Theme, Fonts, Icon and Status Colours (2026-11-09)
+
+- Status: implemented.
+- Validation: `npm test` 147/147; production build passes and the bundle contains the new status utilities, Nunito and Fraunces, with no `dark:` rules. ESLint clean on changed files; Prettier applied. Typecheck shows only the same pre-existing errors (ui/button and ui/tooltip casing, scroll-area, DateTimePicker, Tooltip, navigation.test). No in-browser visual check was possible in this session.
+- Unresolved: Login page still contains POS/inventory copy; the 404 page has an uppercase eyebrow label; the brand icon choice (Baby) needs user confirmation.
+- Next action: check the screens in a browser (sidebar, login, a form with showDirty, dropdown menus, toasts), then run `/impeccable clarify src/pages/Login.tsx`.

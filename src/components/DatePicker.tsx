@@ -185,10 +185,10 @@ export const DatePicker = ({
               aria-invalid={hasError}
               aria-describedby={ariaDescribedBy}
               className={cn(
-                'w-full h-9.5 rounded-xl border border-gray-300 justify-between text-left font-normal data-[empty=true]:text-muted-foreground',
+                'w-full h-9.5 rounded-xl border border-input justify-between text-left font-normal data-[empty=true]:text-muted-foreground',
                 showDirty &&
                   isDirty &&
-                  'bg-amber-50/80 border-amber-300 ring-1 ring-amber-300/40 dark:bg-amber-950/20',
+                  'bg-warning/5 border-warning/40 ring-1 ring-warning/25',
                 buttonClassName,
               )}
             >

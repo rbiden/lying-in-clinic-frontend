@@ -1,0 +1,408 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T12:28:12.104Z",
+  "title": "Design System: Lying In Clinic",
+  "extensions": {
+    "colorMeta": {
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "oklch(1 0 0)",
+        "cssVar": "--background",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.27 0 0)",
+          "oklch(0.39 0 0)",
+          "oklch(0.51 0 0)",
+          "oklch(0.63 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.87 0 0)",
+          "oklch(0.97 0 0)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.145 0 0)",
+        "cssVar": "--foreground",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.27 0 0)",
+          "oklch(0.39 0 0)",
+          "oklch(0.51 0 0)",
+          "oklch(0.63 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.87 0 0)",
+          "oklch(0.95 0 0)"
+        ]
+      },
+      "graphite": {
+        "role": "primary",
+        "displayName": "Graphite",
+        "canonical": "oklch(0.205 0 0)",
+        "cssVar": "--primary",
+        "tonalRamp": [
+          "oklch(0.15 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.371 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.87 0 0)"
+        ]
+      },
+      "graphite-foreground": {
+        "role": "primary",
+        "displayName": "Graphite Foreground",
+        "canonical": "oklch(0.985 0 0)",
+        "cssVar": "--primary-foreground"
+      },
+      "mist": {
+        "role": "neutral",
+        "displayName": "Mist",
+        "canonical": "oklch(0.97 0 0)",
+        "cssVar": "--muted / --secondary / --accent"
+      },
+      "slate-text": {
+        "role": "neutral",
+        "displayName": "Slate Text",
+        "canonical": "oklch(0.556 0 0)",
+        "cssVar": "--muted-foreground"
+      },
+      "hairline": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.922 0 0)",
+        "cssVar": "--border"
+      },
+      "focus-grey": {
+        "role": "neutral",
+        "displayName": "Focus Grey",
+        "canonical": "oklch(0.708 0 0)",
+        "cssVar": "--ring"
+      },
+      "sidebar-paper": {
+        "role": "neutral",
+        "displayName": "Sidebar Paper",
+        "canonical": "oklch(0.985 0 0)",
+        "cssVar": "--sidebar"
+      },
+      "alert-red": {
+        "role": "semantic",
+        "displayName": "Alert Red",
+        "canonical": "oklch(0.545 0.235 27.3)",
+        "cssVar": "--destructive",
+        "tonalRamp": [
+          "oklch(0.25 0.094 27.3)",
+          "oklch(0.35 0.141 27.3)",
+          "oklch(0.45 0.200 27.3)",
+          "oklch(0.55 0.235 27.3)",
+          "oklch(0.65 0.200 27.3)",
+          "oklch(0.76 0.129 27.3)",
+          "oklch(0.86 0.070 27.3)",
+          "oklch(0.95 0.024 27.3)"
+        ]
+      },
+      "recovery-green": {
+        "role": "semantic",
+        "displayName": "Recovery Green",
+        "canonical": "oklch(0.527 0.137 150)",
+        "cssVar": "--success",
+        "tonalRamp": [
+          "oklch(0.25 0.055 150)",
+          "oklch(0.35 0.082 150)",
+          "oklch(0.45 0.116 150)",
+          "oklch(0.55 0.137 150)",
+          "oklch(0.65 0.116 150)",
+          "oklch(0.76 0.075 150)",
+          "oklch(0.86 0.041 150)",
+          "oklch(0.95 0.014 150)"
+        ]
+      },
+      "caution-amber": {
+        "role": "semantic",
+        "displayName": "Caution Amber",
+        "canonical": "oklch(0.555 0.14 62)",
+        "cssVar": "--warning",
+        "tonalRamp": [
+          "oklch(0.25 0.056 62)",
+          "oklch(0.35 0.084 62)",
+          "oklch(0.45 0.119 62)",
+          "oklch(0.55 0.140 62)",
+          "oklch(0.65 0.119 62)",
+          "oklch(0.76 0.077 62)",
+          "oklch(0.86 0.042 62)",
+          "oklch(0.95 0.014 62)"
+        ]
+      },
+      "notice-blue": {
+        "role": "semantic",
+        "displayName": "Notice Blue",
+        "canonical": "oklch(0.52 0.15 255)",
+        "cssVar": "--info",
+        "tonalRamp": [
+          "oklch(0.25 0.060 255)",
+          "oklch(0.35 0.090 255)",
+          "oklch(0.45 0.128 255)",
+          "oklch(0.55 0.150 255)",
+          "oklch(0.65 0.128 255)",
+          "oklch(0.76 0.083 255)",
+          "oklch(0.86 0.045 255)",
+          "oklch(0.95 0.015 255)"
+        ]
+      },
+      "input-stroke": {
+        "role": "neutral",
+        "displayName": "Input Stroke",
+        "canonical": "oklch(0.872 0 0)",
+        "cssVar": "--input"
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Fraunces. Page title in the page header, Graphite; 1.5rem below sm, 2.25rem from sm. One per screen."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Fraunces. Card titles and the product name in the navigation rail."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Nunito. Default for text, table cells, buttons, inputs and navigation."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Nunito. Badges, helper text, captions and compact metadata. 12px is the floor."
+      }
+    },
+    "shadows": [
+      {
+        "name": "resting-card",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05), 0 0 0 1px color-mix(in oklch, var(--foreground) 10%, transparent)",
+        "purpose": "Cards; the ring does most of the work."
+      },
+      {
+        "name": "floating",
+        "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+        "purpose": "Dropdown menus, popovers, comboboxes and toasts; always on a solid surface."
+      },
+      {
+        "name": "overlay",
+        "value": "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)",
+        "purpose": "Dialogs and sheets, over an Ink scrim."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-change",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default colour, background and ring transitions on controls."
+      },
+      {
+        "name": "menu-in-out",
+        "value": "100ms fade + zoom 95%",
+        "purpose": "Dropdown menu open and close (tw-animate-css)."
+      },
+      {
+        "name": "datatable-loading",
+        "value": "1.5s ease-in-out infinite",
+        "purpose": "Progress sweep across the top of a refetching table; full-width static bar under reduced motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md (mobile cutoff)",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one Graphite action on a screen or form.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Admit patient</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; white-space: nowrap; cursor: pointer; transition: background-color 150ms cubic-bezier(0.4,0,0.2,1), box-shadow 150ms cubic-bezier(0.4,0,0.2,1); outline: none; } .ds-btn:active { transform: translateY(1px); } .ds-btn:focus-visible { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.708 0 0)) 50%, transparent); } .ds-btn-primary { background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); } .ds-btn-primary:hover { background: color-mix(in oklch, var(--primary, oklch(0.205 0 0)) 80%, transparent); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions next to a primary, such as Cancel or Retry.",
+      "html": "<button class=\"ds-btn-outline\">Retry</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; height: 32px; padding: 0 10px; border: 1px solid var(--border, oklch(0.922 0 0)); border-radius: 10px; background: var(--background, oklch(1 0 0)); color: var(--foreground, oklch(0.145 0 0)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-outline:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-btn-outline:focus-visible { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.708 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "Row actions, pagination and toolbars.",
+      "html": "<button class=\"ds-btn-ghost\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m15 18-6-6 6-6\"/></svg>Previous</button>",
+      "css": ".ds-btn-ghost { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: transparent; color: var(--foreground, oklch(0.145 0 0)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-ghost:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-btn-ghost:focus-visible { box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring, oklch(0.708 0 0)) 50%, transparent); }"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-destructive",
+      "description": "Destructive actions: red text on a 10% tint, never a solid fill.",
+      "html": "<button class=\"ds-btn-destructive\">Cancel admission</button>",
+      "css": ".ds-btn-destructive { display: inline-flex; align-items: center; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: color-mix(in oklch, var(--destructive, oklch(0.545 0.235 27.3)) 10%, transparent); color: var(--destructive, oklch(0.545 0.235 27.3)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-destructive:hover { background: color-mix(in oklch, var(--destructive, oklch(0.545 0.235 27.3)) 20%, transparent); } .ds-btn-destructive:focus-visible { border-color: color-mix(in oklch, var(--destructive, oklch(0.545 0.235 27.3)) 40%, transparent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive, oklch(0.545 0.235 27.3)) 20%, transparent); }"
+    },
+    {
+      "name": "Success Button",
+      "kind": "button",
+      "refersTo": "button-success",
+      "description": "Confirming a positive action: green text on a 10% tint.",
+      "html": "<button class=\"ds-btn-success\">Mark discharged</button>",
+      "css": ".ds-btn-success { display: inline-flex; align-items: center; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: color-mix(in oklch, var(--success, oklch(0.527 0.137 150)) 10%, transparent); color: var(--success, oklch(0.527 0.137 150)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-success:hover { background: color-mix(in oklch, var(--success, oklch(0.527 0.137 150)) 20%, transparent); } .ds-btn-success:focus-visible { border-color: color-mix(in oklch, var(--success, oklch(0.527 0.137 150)) 40%, transparent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--success, oklch(0.527 0.137 150)) 20%, transparent); }"
+    },
+    {
+      "name": "Warning Button",
+      "kind": "button",
+      "refersTo": "button-warning",
+      "description": "An action that needs care: amber text on a 10% tint.",
+      "html": "<button class=\"ds-btn-warning\">Override allocation</button>",
+      "css": ".ds-btn-warning { display: inline-flex; align-items: center; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: color-mix(in oklch, var(--warning, oklch(0.555 0.14 62)) 10%, transparent); color: var(--warning, oklch(0.555 0.14 62)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-warning:hover { background: color-mix(in oklch, var(--warning, oklch(0.555 0.14 62)) 20%, transparent); } .ds-btn-warning:focus-visible { border-color: color-mix(in oklch, var(--warning, oklch(0.555 0.14 62)) 40%, transparent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--warning, oklch(0.555 0.14 62)) 20%, transparent); }"
+    },
+    {
+      "name": "Info Button",
+      "kind": "button",
+      "refersTo": "button-info",
+      "description": "A neutral, informational action: blue text on a 10% tint.",
+      "html": "<button class=\"ds-btn-info\">View guidance</button>",
+      "css": ".ds-btn-info { display: inline-flex; align-items: center; height: 32px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; background: color-mix(in oklch, var(--info, oklch(0.52 0.15 255)) 10%, transparent); color: var(--info, oklch(0.52 0.15 255)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 150ms; outline: none; } .ds-btn-info:hover { background: color-mix(in oklch, var(--info, oklch(0.52 0.15 255)) 20%, transparent); } .ds-btn-info:focus-visible { border-color: color-mix(in oklch, var(--info, oklch(0.52 0.15 255)) 40%, transparent); box-shadow: 0 0 0 3px color-mix(in oklch, var(--info, oklch(0.52 0.15 255)) 20%, transparent); }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "40px input group with an optional prefix icon; soft grey focus ring.",
+      "html": "<label class=\"ds-field\"><span class=\"ds-field-label\">Patient name</span><span class=\"ds-input-group\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"11\" cy=\"11\" r=\"8\"/><path d=\"m21 21-4.3-4.3\"/></svg><input class=\"ds-input\" placeholder=\"Search patients\" /></span></label>",
+      "css": ".ds-field { display: grid; gap: 6px; font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; } .ds-field-label { font-size: 14px; font-weight: 500; color: var(--foreground, oklch(0.145 0 0)); } .ds-input-group { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 12px; border: 1px solid var(--input, oklch(0.872 0 0)); border-radius: 14px; background: var(--background, oklch(1 0 0)); color: var(--muted-foreground, oklch(0.556 0 0)); transition: border-color 150ms, box-shadow 150ms; } .ds-input-group:focus-within { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring, oklch(0.708 0 0)) 30%, transparent); } .ds-input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; font: inherit; font-size: 14px; color: var(--foreground, oklch(0.145 0 0)); }"
+    },
+    {
+      "name": "Badge",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Fully round 12px status or count label; always carries text. Status tints: destructive, success, warning, info.",
+      "html": "<span class=\"ds-badge\">Admitted</span> <span class=\"ds-badge ds-badge-secondary\">Outpatient</span> <span class=\"ds-badge ds-badge-success\">Bed free</span> <span class=\"ds-badge ds-badge-warning\">Unsaved</span> <span class=\"ds-badge ds-badge-info\">Referral</span> <span class=\"ds-badge ds-badge-destructive\">Allergy</span>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border: 1px solid transparent; border-radius: 9999px; background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 12px; font-weight: 600; } .ds-badge-secondary { background: var(--secondary, oklch(0.97 0 0)); color: var(--secondary-foreground, oklch(0.205 0 0)); } .ds-badge-destructive { background: color-mix(in oklch, var(--destructive, oklch(0.545 0.235 27.3)) 10%, transparent); color: var(--destructive, oklch(0.545 0.235 27.3)); } .ds-badge-success { background: color-mix(in oklch, var(--success, oklch(0.527 0.137 150)) 10%, transparent); color: var(--success, oklch(0.527 0.137 150)); } .ds-badge-warning { background: color-mix(in oklch, var(--warning, oklch(0.555 0.14 62)) 10%, transparent); color: var(--warning, oklch(0.555 0.14 62)); } .ds-badge-info { background: color-mix(in oklch, var(--info, oklch(0.52 0.15 255)) 10%, transparent); color: var(--info, oklch(0.52 0.15 255)); }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "24px-corner Paper White container with a faint ring and resting shadow; Fraunces title.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">Bed availability</div><p class=\"ds-card-desc\">6 of 10 beds free</p></div>",
+      "css": ".ds-card { display: grid; gap: 6px; max-width: 320px; padding: 20px; border-radius: 24px; background: var(--card, oklch(1 0 0)); color: var(--card-foreground, oklch(0.145 0 0)); box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05), 0 0 0 1px color-mix(in oklch, var(--foreground, oklch(0.145 0 0)) 10%, transparent); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; font-size: 14px; } .ds-card-title { font-family: 'Fraunces Variable', ui-serif, Georgia, serif; font-size: 24px; font-weight: 900; line-height: 1.33; } .ds-card-desc { margin: 0; color: var(--muted-foreground, oklch(0.556 0 0)); }"
+    },
+    {
+      "name": "Navigation Item",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar rows: Slate Text at rest, Mist on hover, Graphite tint and ring when active.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Main\"><a class=\"ds-nav-item is-active\" aria-current=\"page\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg>Dashboard</a><a class=\"ds-nav-item\" href=\"#\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/><circle cx=\"9\" cy=\"7\" r=\"4\"/></svg>Users</a></nav>",
+      "css": ".ds-nav { display: grid; gap: 4px; width: 224px; padding: 8px; background: var(--sidebar, oklch(0.985 0 0)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; } .ds-nav-item { display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 8px; border: 1px solid transparent; border-radius: 8px; color: var(--muted-foreground, oklch(0.556 0 0)); font-size: 14px; font-weight: 500; text-decoration: none; transition: background-color 150ms; outline: none; } .ds-nav-item:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-nav-item:focus-visible { box-shadow: 0 0 0 2px var(--ring, oklch(0.708 0 0)); } .ds-nav-item.is-active { background: color-mix(in oklch, var(--primary, oklch(0.205 0 0)) 10%, transparent); border-color: var(--border, oklch(0.922 0 0)); box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary, oklch(0.205 0 0)) 30%, transparent); color: var(--primary, oklch(0.205 0 0)); font-weight: 600; }"
+    },
+    {
+      "name": "Data Table",
+      "kind": "custom",
+      "refersTo": "data-table",
+      "description": "Signature working-list surface: hairline rows, quiet hover, Graphite sort indicator.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th>Patient</th><th><button class=\"ds-sort\">Admitted <svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M12 5v14\"/><path d=\"m19 12-7 7-7-7\"/></svg></button></th><th>Bed</th></tr></thead><tbody><tr><td>Maria Santos</td><td>Nov 9, 08:40</td><td>B-02</td></tr><tr class=\"is-selected\"><td>Ana Reyes</td><td>Nov 9, 07:15</td><td>B-05</td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap { overflow-x: auto; padding: 4px; border: 1px solid var(--border, oklch(0.922 0 0)); border-radius: 18px; background: var(--background, oklch(1 0 0)); font-family: 'Nunito Variable', ui-sans-serif, system-ui, sans-serif; } .ds-table { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--foreground, oklch(0.145 0 0)); text-align: left; } .ds-table th { padding: 12px; font-weight: 500; white-space: nowrap; border-bottom: 1px solid var(--border, oklch(0.922 0 0)); } .ds-table td { padding: 6px 12px; white-space: nowrap; } .ds-table tbody tr + tr td { border-top: 1px solid color-mix(in oklch, var(--border, oklch(0.922 0 0)) 60%, transparent); } .ds-table tbody tr:hover { background: color-mix(in oklch, var(--muted, oklch(0.97 0 0)) 30%, transparent); } .ds-table tr.is-selected { background: color-mix(in oklch, var(--primary, oklch(0.205 0 0)) 5%, transparent); } .ds-sort { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer; } .ds-sort svg { color: var(--primary, oklch(0.205 0 0)); } .ds-sort:focus-visible { outline: 2px solid var(--ring, oklch(0.708 0 0)); border-radius: 4px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Quiet Ward",
+    "overview": "The interface should feel like a well-kept clinic room: calm, uncluttered, nothing calling for attention it hasn't earned. Colour is held back almost entirely, so patient names, vitals, bed status and the next task carry the screen. Staff use it all day; its job is to stay out of the way and be exact.\n\nIt is a light, monochrome system by intent. There is no dark mode. Everything runs from paper white through mist and slate to a near-black graphite. Four status colours (red, green, amber, blue) appear only when they carry meaning. The layout is compact: 14px body text, 32px controls, 4px-step spacing. Precision shows in alignment and consistency, not ornament.\n\nWarmth comes from tone, not tinted surfaces. The neutrals stay pure grey. The reassurance is carried by the rounded, friendly Nunito body face, the soft Fraunces serif on titles, generous corners, unhurried spacing, gentle state changes, and plain clinic wording.",
+    "keyCharacteristics": [
+      "Light theme only; achromatic palette; colour appears only to mean something.",
+      "Compact, data-first density, built for desktop with tablet and mobile support.",
+      "Soft, rounded forms (10px base radius) and hairline separation.",
+      "Flat surfaces; shadows only for things that float.",
+      "Nunito for the working interface, Fraunces for titles and headings."
+    ],
+    "rules": [
+      {
+        "name": "The Earned Colour Rule",
+        "body": "Colour means something or it is not used. Graphite marks the primary action; the four status colours mark state. Nothing is coloured for decoration, and status colours are never used as brand accents.",
+        "section": "colors"
+      },
+      {
+        "name": "The Tint, Not Fill Rule",
+        "body": "Status colours appear as coloured text or icons on a 10% tint of the same colour (20% on hover), with a 40%-strength border when a border is needed. Solid status fills are avoided.",
+        "section": "colors"
+      },
+      {
+        "name": "The Never-Colour-Alone Rule",
+        "body": "Status must also be carried by text, an icon or a shape, because colour by itself fails some staff and some screens. A red border on an invalid field always comes with an error message.",
+        "section": "colors"
+      },
+      {
+        "name": "The Token-Only Rule",
+        "body": "Components use the semantic tokens (`border`, `input`, `muted`, `muted-foreground`, `success`…), never raw Tailwind palette classes (`gray-300`, `amber-50`, `bg-white`, `bg-black`). The palette lives in one place.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two Voices Rule",
+        "body": "Fraunces speaks for titles and headings; `h1`–`h4` and `font-heading` use it automatically. Nunito does everything else: controls, data, forms and body copy. Never set data, buttons or form labels in Fraunces, and never add a third family.",
+        "section": "typography"
+      },
+      {
+        "name": "The Small-and-Steady Rule",
+        "body": "Working text is 14px; 12px is the floor, used for labels only. Keep long readings, such as clinical notes, at 14px or larger. Tables use tabular figures so numbers line up.",
+        "section": "typography"
+      },
+      {
+        "name": "The Float-Only Shadow Rule",
+        "body": "If it does not sit above other content, it gets no shadow beyond the resting card. Panels, tables and sections separate with hairlines.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Solid Menu Rule",
+        "body": "Menus and popovers are opaque Paper White. No frosted glass, no translucent popups and no inverted dark menus.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Soft Veil Rule",
+        "body": "Busy and error states veil the table with a translucent background and a 1px backdrop blur instead of replacing it, so staff keep their place.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use semantic tokens (bg-background, border-border, border-input, bg-muted, text-muted-foreground, text-success, bg-warning/10) for every colour.",
+      "Do use status colours as text or icons on a 10% tint of the same colour, and pair them with words or an icon.",
+      "Do keep working text at 14px Nunito and controls at 32px. Use 40px rows for navigation and form inputs.",
+      "Do set titles and headings in Fraunces through h1–h4 or font-heading.",
+      "Do separate surfaces with 1px Hairlines or a one-step tonal change before reaching for a shadow.",
+      "Do show loading, empty, error and success states on every data surface, matching the Data Table's treatments.",
+      "Do keep focus visible: a soft Focus Grey ring on every interactive element."
+    ],
+    "donts": [
+      "Don't add a dark theme, dark: classes or prefers-color-scheme styling. The product is light only.",
+      "Don't use raw Tailwind palette colours (gray-*, amber-*, emerald-*, red-*, bg-white, bg-black) in components.",
+      "Don't use status colours for decoration or brand accents. Decorative glows use Graphite or Slate Text tints.",
+      "Don't fill status actions with solid colour. Use the tinted variants.",
+      "Don't introduce another typeface or set controls and data in Fraunces.",
+      "Don't mix icon libraries. Use Lucide throughout.",
+      "Don't put shadows on panels, tables or page sections, and don't make menus translucent or frosted.",
+      "Don't use legacy inventory imagery or wording; the brand mark is the Baby icon."
+    ]
+  }
+}

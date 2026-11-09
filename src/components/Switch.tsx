@@ -87,7 +87,7 @@ export const Switch = ({
         aria-invalid={hasError}
         aria-describedby={ariaDescribedBy}
         className={cn(
-          showDirty && isDirty && 'ring-2 ring-amber-400 ring-offset-1',
+          showDirty && isDirty && 'ring-2 ring-warning/60 ring-offset-1',
           hasError && 'ring-2 ring-destructive ring-offset-1',
           switchClassName,
         )}

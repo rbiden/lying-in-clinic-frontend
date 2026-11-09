@@ -27,7 +27,7 @@ export function useTableState(options: TableStateOptions) {
     (sortField: string | null, sortType: SortOrder | null) => {
       if (
         (sortField === null) !== (sortType === null) ||
-        (sortField !== null && !fields.includes(sortField)) ||
+        (sortField !== null && !fields?.includes(sortField)) ||
         (sortType !== null && !['asc', 'desc'].includes(sortType))
       )
         throw new Error(

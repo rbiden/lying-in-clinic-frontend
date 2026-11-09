@@ -96,7 +96,7 @@ export const RadioGroup = ({
             : 'grid gap-2.5',
           showDirty &&
             isDirty &&
-            'rounded-xl p-1.5 border border-amber-300 bg-amber-50/50 ring-1 ring-amber-300/40 dark:bg-amber-950/20',
+            'rounded-xl p-1.5 border border-warning/40 bg-warning/5 ring-1 ring-warning/25',
           radioGroupClassName,
         )}
       >

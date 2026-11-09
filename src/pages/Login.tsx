@@ -1,4 +1,4 @@
-import { Warehouse, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Baby, ShieldCheck, ArrowRight } from 'lucide-react'
 import type { LoginDto } from '../features/auth'
 import { LoginSchema, useLoginMutation } from '../features/auth'
 import { GuestAtmosphere, FormCard, Input } from '#/components'
@@ -20,7 +20,7 @@ export const Login = () => {
 
       {/* Brand Header Chip */}
       <div className="relative z-10 mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-sm font-medium text-primary shadow-xs backdrop-blur-md">
-        <Warehouse className="h-4 w-4" />
+        <Baby className="h-4 w-4" />
         <span>POS & Inventory System</span>
       </div>
 

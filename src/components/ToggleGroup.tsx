@@ -123,7 +123,7 @@ function SingleToggleGroupField({
         className={cn(
           showDirty &&
             isDirty &&
-            'ring-2 ring-amber-400 ring-offset-1 rounded-xl',
+            'ring-2 ring-warning/60 ring-offset-1 rounded-xl',
           hasError && 'ring-2 ring-destructive ring-offset-1 rounded-xl',
           toggleGroupClassName,
         )}
@@ -239,7 +239,7 @@ function MultipleToggleGroupField({
         className={cn(
           showDirty &&
             isDirty &&
-            'ring-2 ring-amber-400 ring-offset-1 rounded-xl',
+            'ring-2 ring-warning/60 ring-offset-1 rounded-xl',
           hasError && 'ring-2 ring-destructive ring-offset-1 rounded-xl',
           toggleGroupClassName,
         )}

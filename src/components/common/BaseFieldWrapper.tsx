@@ -53,7 +53,7 @@ export const BaseFieldWrapper = ({
           'gap-1.5 p-1',
           showDirty &&
             isDirty &&
-            'rounded-lg bg-amber-50/80 p-2 border-amber-300 ring-1 ring-amber-300/40 dark:bg-amber-950/20',
+            'rounded-lg bg-warning/5 p-2 border-warning/40 ring-1 ring-warning/25',
           wrapperClassName,
         )}
       >
@@ -135,7 +135,7 @@ export const BaseFieldWrapper = ({
         'gap-1 p-0',
         showDirty &&
           isDirty &&
-          'rounded-lg bg-amber-50/80 p-2 border-amber-300 ring-1 ring-amber-300/40 dark:bg-amber-950/20',
+          'rounded-lg bg-warning/5 p-2 border-warning/40 ring-1 ring-warning/25',
         wrapperClassName,
       )}
     >

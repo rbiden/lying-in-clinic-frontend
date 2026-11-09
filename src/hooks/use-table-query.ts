@@ -1,12 +1,21 @@
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useLocation, useNavigate } from 'react-router'
 import type { FilterValues } from '@/helpers/filters'
 import {
   buildTableParams,
+  DEFAULT_TABLE_FILTER_SCHEMA,
   readTableUrl,
   tableUrlSlice,
   tableValueKey,
 } from '@/helpers/table-query'
+import { rememberListSearch } from '@/helpers/list-return'
 import type { TableQueryOptions } from '@/types/datatable.types'
 import { useTableQueryStore } from '@/stores/table-query-store'
 import { useTableFilters } from './use-table-filters'
@@ -14,7 +23,7 @@ import { useTableState } from './use-table-state'
 import { queueTableUrlUpdate } from './table-url-sync'
 
 /** One owner per tableKey. Mount under a React Router; keep configuration stable. */
-export function useTableQuery<TFilters extends FilterValues>(
+export function useTableQuery<TFilters extends FilterValues = FilterValues>(
   options: TableQueryOptions<TFilters>,
 ) {
   const { tableKey } = options
@@ -22,34 +31,52 @@ export function useTableQuery<TFilters extends FilterValues>(
   const location = useLocation()
   const navigate = useNavigate()
   const configRef = useRef(options)
+
   configRef.current = options
+
   const locationRef = useRef(location)
   locationRef.current = location
+
   const [owner] = useState(() => Symbol('table-owner'))
   const [initial] = useState(() => readTableUrl(location.search, options))
   const table = useTableState({ ...options, initialState: initial.state })
+
   const filter = useTableFilters(tableKey)
   const { state: filterState } = filter
+
+  const resetFilters = useCallback(() => {
+    const result = filter.resetFilters()
+    if (!result.success) return
+    filter.setSearch('')
+    table.setPage(1)
+  }, [filter.resetFilters, filter.setSearch, table.setPage])
+
   const filterIdentity = tableValueKey([
     filterState.filters,
     filterState.search,
   ])
+
   const [anchor, setAnchor] = useState({ tableKey, identity: filterIdentity })
   const [readyKey, setReadyKey] = useState<string | null>(null)
+
   const sync = useRef({
     raw: '',
     pending: null as string | null,
     mounted: false,
   })
+
   const raw = tableUrlSlice(location.search, tableKey)
+
   const isReady =
     readyKey === tableKey &&
     filterState.epoch > 0 &&
     filterState === useTableQueryStore.getState().tables[tableKey] &&
     (raw === sync.current.raw || raw === sync.current.pending)
+
   const resetPage =
     isReady &&
     (anchor.tableKey !== tableKey || anchor.identity !== filterIdentity)
+
   const state = useMemo(
     () => (resetPage ? { ...table.state, page: 1 } : table.state),
     [resetPage, table.state],
@@ -57,24 +84,33 @@ export function useTableQuery<TFilters extends FilterValues>(
 
   useLayoutEffect(() => {
     const config = configRef.current
-    const defaults = config.filterSchema.parse(config.defaultFilters)
+    const schema = config.filterSchema ?? DEFAULT_TABLE_FILTER_SCHEMA
+    const defaults = schema.parse(config.defaultFilters ?? {})
     const store = useTableQueryStore.getState()
+
     const release = store.configure(tableKey, {
       owner,
-      schema: config.filterSchema,
+      schema,
       defaults,
     })
+
     sync.current.mounted = true
+
     const restored = readTableUrl(locationRef.current.search, config)
     sync.current.raw = tableUrlSlice(locationRef.current.search, tableKey)
+
     sync.current.pending = null
+
     store.restore(tableKey, restored.filters, restored.search)
     table.setState(restored.state)
+
     setAnchor({
       tableKey,
       identity: tableValueKey([restored.filters, restored.search]),
     })
+
     setReadyKey(tableKey)
+
     return () => {
       sync.current.mounted = false
       release()
@@ -87,14 +123,20 @@ export function useTableQuery<TFilters extends FilterValues>(
       sync.current.pending = null
       return
     }
+
     if (raw === sync.current.raw) return
+
     const restored = readTableUrl(location.search, configRef.current)
+
     sync.current.raw = raw
     sync.current.pending = null
+
     useTableQueryStore
       .getState()
       .restore(tableKey, restored.filters, restored.search)
+
     table.setState(restored.state)
+
     setAnchor({
       tableKey,
       identity: tableValueKey([restored.filters, restored.search]),
@@ -107,7 +149,9 @@ export function useTableQuery<TFilters extends FilterValues>(
       table.setState(state)
       setAnchor({ tableKey, identity: filterIdentity })
     }
+
     const expectedKey = location.key
+
     queueTableUrlUpdate({
       location,
       navigate,
@@ -133,13 +177,21 @@ export function useTableQuery<TFilters extends FilterValues>(
     navigate,
   ])
 
+  // Back buttons on detail pages read this to reopen the list as it was left.
+  useEffect(() => {
+    rememberListSearch(location.pathname, location.search)
+  }, [location.pathname, location.search])
+
   const queryIdentity = tableValueKey([
     state,
     filterState.filters,
     filterState.search,
   ])
+
   const currentQuery = useRef({ queryIdentity, state, isReady })
+
   currentQuery.current = { queryIdentity, state, isReady }
+
   const acceptTotal = useCallback(
     (totalCount: number, responseIdentity: string) => {
       const current = currentQuery.current
@@ -151,6 +203,7 @@ export function useTableQuery<TFilters extends FilterValues>(
     },
     [table.setPage],
   )
+
   const params = useMemo(
     () =>
       buildTableParams(
@@ -173,5 +226,6 @@ export function useTableQuery<TFilters extends FilterValues>(
     setPage: table.setPage,
     setLimit: table.setLimit,
     setSort: table.setSort,
+    resetFilters,
   }
 }

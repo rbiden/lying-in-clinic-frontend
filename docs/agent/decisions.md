@@ -221,3 +221,39 @@ These are code observations, not newly approved architecture decisions:
 - Error overlay choice (2026-10-14): Center alert and optional Retry over the table; busy overlay takes precedence during retry. Correct busy condition from !busy to busy so successful tables are not obscured; retain user shimmer styling.
 
 - Overlay design (2026-10-14): Reuse LoadingScreen circular ring, inset Warehouse icon, heading/supporting typography, theme colors and reduced-motion spin. Error uses matching static destructive ring and retry; reserve minimum overlay height. Correct current inverted error visibility condition.
+
+### Impeccable Init (2026-11-09)
+
+- Context loader completed; no PRODUCT.md or DESIGN.md exists. Preserve current application and existing working changes.
+- Follow init interview before writing PRODUCT.md. Build workflow preference remains pending; no default saved.
+
+### Impeccable Init: Confirmed Record and Configuration (2026-11-09)
+
+- Supersedes the pending interview/workflow note above: confirmed product requirements are captured in root PRODUCT.md with product schema 1 and bare platform value `web`. It separates intended clinic capabilities from inspected frontend functionality and explicitly retains unresolved contracts and hosting compatibility.
+- User selected code-first for future landing/showcase surfaces. Store `buildPath: "code"` only in `.impeccable/config.json`; it is a workflow setting, not PRODUCT.md content. Preserve `.impeccable/config.local.json`.
+- Configure live mode for the Vite SPA shell using `files: ["index.html"]`, `insertBefore: "</body>"`, `commentSyntax: "html"`, and `cspChecked: true`. The completed detect-csp result was `shape: null`, `signals: []`; no CSP source modification is needed.
+- Init completes with documentation/configuration only. No DESIGN.md, application changes, live-server launch, backend verification, or deployment is part of this work.
+
+### DataTable Sync From faculty-evaluation-frontend (2026-11-09)
+
+- User request: port the DataTable and its hooks/helpers from the local `faculty-evaluation-frontend` project. Upgraded the existing port in place rather than adding a parallel copy; kept this repo's file names (`helpers/table-query.ts`, `helpers/filters.ts`, `helpers/list-return.ts`) instead of the source's `*.helpers.ts` names.
+- Added from source: row `actions`/`actionType` (`DataTableActions`), `getRowClassName`, `cellClassName` (table and column level), `headerClassName`, `canBulkSelectRow`, `selectionDisabled`, `showPagination`, a "Clear Filters" empty-state button driven by `useTableQuery().resetFilters`, a page-number input when there are more than 1000 pages, optional `filterSchema`/`defaultFilters`/`sortFields`, `tableFilterSearch`, and list-return memory (`rememberListSearch`, `listReturnTo`, `listReturnHref`). Non-selectable rows now render no checkbox instead of a disabled one.
+- New supporting components: `components/Dropdown.tsx` and the shadcn base-ui `components/ui/dropdown-menu.tsx` (copied from source; `cn` import switched to `@/lib/utils`). The older minimal `ui/DropdownMenu.tsx` stays because `Input` uses it.
+- Kept this repo's `types/query.types.ts` (source widened `page`/`limit` to `number | null`, which broke an existing audit-logs test and is not needed by DataTable). Kept this repo's Audit Logs README paragraph. Source busy-overlay icon is `CalendarDays` (replaced `Warehouse`).
+- No new npm packages were needed; `@tanstack/react-table`, `zustand`, `zod`, `react-router`, `@base-ui/react`, `lucide-react` and `@hugeicons/*` were already installed.
+
+### Impeccable Document (2026-11-09)
+
+- User chose to document the uncommitted working-tree theme (shadcn base-nova, neutral greys, Inter, 0.625rem radius), not the committed emerald/Merriweather base-rhea theme. DESIGN.md and `.impeccable/design.json` record it.
+- Confirmed language: North Star "The Quiet Ward"; mood calm, precise, neutral, warm/reassuring, with warmth carried by tone (wording, corners, spacing), not by tinting tokens; primary named Graphite; flat, lines-first elevation; soft and restrained components.
+- Recorded drift (not fixed): raw greys/bg-white in InputGroup, Sidebar, AuthLayout, DataTable, Dropdown; the ported dropdown-menu's dark translucent popup; unused Geist/Plex/Merriweather imports; legacy Warehouse icon in Sidebar; no success/warning/info tokens yet. Documentation only; no application code changed.
+
+### Light Theme, Fonts, Icon and Status Colours (2026-11-09)
+
+- Removed the `.dark` block, `@custom-variant dark` and every `dark:` class (Tailwind v4 would otherwise fall back to the OS setting). Declared `color-scheme: light` in CSS and index.html. Limited Tailwind scanning to `src/` (`@import 'tailwindcss' source('.')`) because `.agents/skills` docs were adding stray classes, including a `dark:` rule, to the bundle (CSS 149 kB to 123 kB).
+- Fonts: self-hosted fontsource Nunito (wght + italic) and Fraunces (opsz + italic) under `src/assets/fonts`, matching the old layout; removed the geist/ibm-plex-sans/merriweather folders and the `@fontsource-variable/inter` package. `h1`–`h4` default to Fraunces.
+- New tokens: `--success`, `--warning`, `--info` (+ foregrounds); `--destructive` darkened slightly to 0.545 for text contrast on tints; `--input` raised to 0.872 to keep the previous gray-300 field outline while making it token-based.
+- Status variants added to Button, Badge, dropdown-menu items, Dropdown entries, DataTable actions and ActionVariant (shared `StatusVariant` type); toast icons coloured; ConfirmationDialog icon follows the confirm variant (default stays red).
+- Theme mismatches mapped to tokens: amber "dirty" field state to `warning`; raw greys/white/black to input/muted/border/card/foreground; decorative amber/emerald glows to neutral tints; dropdown popups made solid (no glass, no forced dark); dropdown icons switched from Hugeicons to Lucide.
+- Icon: Warehouse to Lucide `Baby` (Sidebar, LoadingScreen, Login); 404 PackageSearch to SearchX; new favicon linked in index.html; page title set to Lying In Clinic.
+- DESIGN.md and `.impeccable/design.json` rewritten to match.

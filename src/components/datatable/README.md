@@ -1,5 +1,13 @@
 # DataTable
 
+Row actions accept `hidden: true` or `hidden: (row) => boolean`. Hidden actions
+are omitted in both dropdown and inline modes. When all actions for a row are
+hidden, no action buttons or empty dropdown trigger render.
+
+```tsx
+{ label: 'Edit', onClick: onEdit, hidden: (row) => row.status === 'Closed' }
+```
+
 Pass the existing `useTableState` or `useTableQuery` result as `table`. Rows,
 columns, request status, and controlled selection remain separate props.
 

@@ -57,7 +57,14 @@ export { DatePicker } from './DatePicker'
 export { DateTimePicker } from './DateTimePicker'
 export { Filter } from './Filter'
 export { DataTable } from './datatable/DataTable'
-export type { DataTableProps, DataTableColumn, TableState } from '../types/datatable.types'
+export type {
+  DataTableProps,
+  DataTableColumn,
+  DataTableAction,
+  TableState,
+} from '../types/datatable.types'
+export { Dropdown } from './Dropdown'
+export type { DropdownProps, DropdownEntry, DropdownGroup } from './Dropdown'
 export { ConfirmationDialog } from './ConfirmationDialog'
 export { Sidebar } from './Sidebar'
 export { PageHeader } from './PageHeader'

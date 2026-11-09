@@ -9,7 +9,7 @@ export function InputGroup({
   return (
     <div
       className={cn(
-        'relative flex w-full items-center rounded-xl h-10 border border-gray-300 bg-background transition-[color,box-shadow]',
+        'relative flex w-full items-center rounded-xl h-10 border border-input bg-background transition-[color,box-shadow]',
         'focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/30',
         'aria-invalid:focus-within:ring-3 aria-invalid:border aria-invalid:border-destructive/70 aria-invalid:ring-2 aria-invalid:ring-destructive/30',
         className,
