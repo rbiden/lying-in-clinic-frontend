@@ -17,7 +17,7 @@ export function SessionErrorScreen({ retry }: { retry: () => void }) {
           className="mx-auto size-10 text-primary"
           aria-hidden="true"
         />
-        <h1 className="font-heading text-xl font-semibold">
+        <h1 className="font-heading text-5xl font-semibold">
           Unable to check your session
         </h1>
         <p className="text-sm text-muted-foreground">
