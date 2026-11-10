@@ -1,5 +1,20 @@
 # Requirements
 
+## Backend Auth and Response Alignment (2026-11-10)
+
+- Mandatory, planning only: align auth/session with the actual `lying-in-clinic-backend` contract. Inspect that backend as the source of truth.
+- Mandatory: adjust or create `ApiResponse`, `PaginateResponse`, and `MessageResponse`; account for their existing consumers.
+- Mandatory: every feature must have its own barrel `index.ts` file. Include structure improvement recommendations in the plan.
+- Authorization update (2026-11-10): user approved `docs/plans/backend-auth-session-alignment.md`; implementation, focused regressions, and planned validation are authorized. This supersedes plan-only status above.
+- Confirmed: target separate frontend/API origins on the same site; exact hostnames remain deployment configuration values.
+- Confirmed: include Audit Logs alignment with backend event/date filters, pagination, actor ID and subject fields.
+- Source supplied by user: local API documentation at `http://localhost:8000/docs#/`; cross-check its OpenAPI schema against the backend source.
+- Scope extension: add reusable `ErrorState`, `LoadingState` using a spinner, `PendingState` using skeletons with `modal`, `card`, and `page` variants, and `EmptyState`. Maximize existing shadcn components and Tailwind utilities. This extends the proposed plan; it is not implementation approval.
+- Follow-up, confirmed direction: redesign loading with a branded vertical status: static clinic icon above the heading, small spinner beside the status text below; remove the rotating logo ring and glows. Retain the current light theme.
+- Supersedes the previous broad response-normalization direction below. Preserve existing edits until implementation is approved.
+
+- Session response normalization (2026-11-10, superseded by Backend Auth and Response Alignment): previous implementation accepted multiple auth response envelopes. This was an implementation choice, not a user-confirmed backend contract; the new plan must replace it with the inspected clinic backend contract.
+
 - Session marker cleanup (2026-10-15): user requested simplifying the manual marker validation in readSessionChange. Use existing Zod helpers/schema file and preserve accepted marker shape, reasons and null on invalid input.
 
 - Session query predicate (2026-10-15): user requested Array.includes in the auth.session.ts removeQueries predicate. Apply to both account-change and logout cleanup.

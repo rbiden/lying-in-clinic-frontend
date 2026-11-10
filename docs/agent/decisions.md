@@ -257,3 +257,16 @@ These are code observations, not newly approved architecture decisions:
 - Theme mismatches mapped to tokens: amber "dirty" field state to `warning`; raw greys/white/black to input/muted/border/card/foreground; decorative amber/emerald glows to neutral tints; dropdown popups made solid (no glass, no forced dark); dropdown icons switched from Hugeicons to Lucide.
 - Icon: Warehouse to Lucide `Baby` (Sidebar, LoadingScreen, Login); 404 PackageSearch to SearchX; new favicon linked in index.html; page title set to Lying In Clinic.
 - DESIGN.md and `.impeccable/design.json` rewritten to match.
+
+### Auth Response Envelope Normalization (2026-11-10)
+
+- Normalize login, refresh and current-user responses in `auth.service.ts` to the shared `ApiResponse<{ user: AuthUser }>` contract. Accept the backend's common `data.user`, `data` resource, `user`, and direct-user forms. Reject missing/invalid users so the existing query error path displays the retry screen rather than allowing `applySession` to crash the boundary.
+
+### Clinic Backend Alignment Plan (2026-11-10)
+
+- The user identified `lying-in-clinic-backend` as the source of truth and requested a plan. The earlier generic response normalizer is superseded as a design direction; application replacement awaits plan approval.
+- Confirmed deployment topology: separate frontend/API origins on the same site. Exact domains are configuration values to supply at deployment.
+- Confirmed scope includes Audit Logs alignment: use the backend's event/date filters, pagination, actor ID and subject fields alongside auth, shared response types and feature barrels.
+- User approved `docs/plans/backend-auth-session-alignment.md` on 2026-11-10. Implement exact Laravel resource and error envelopes, no refresh endpoint, 204 logout, CSRF/session reconciliation on protected 419 without replaying mutations, numeric feature-owned users and cycle-safe explicit feature barrels.
+- Scope includes ErrorState, spinner LoadingState, skeleton PendingState (modal/card/page), and EmptyState, using shadcn and Tailwind. Bounded adoption is auth wrappers and DataTable defaults, preserving table override slots and the existing Empty API.
+- Confirmed loading direction: branded vertical status with a static clinic icon above the heading and a small spinner beside status text below, removing the rotating logo ring and glows. Compact table/inline loading remains spinner-and-text without forced branding.

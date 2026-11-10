@@ -436,3 +436,19 @@ For authorized work, record outcome, status, priority, requirement/decision link
 - Validation: `npm test` 147/147; production build passes and the bundle contains the new status utilities, Nunito and Fraunces, with no `dark:` rules. ESLint clean on changed files; Prettier applied. Typecheck shows only the same pre-existing errors (ui/button and ui/tooltip casing, scroll-area, DateTimePicker, Tooltip, navigation.test). No in-browser visual check was possible in this session.
 - Unresolved: Login page still contains POS/inventory copy; the 404 page has an uppercase eyebrow label; the brand icon choice (Baby) needs user confirmation.
 - Next action: check the screens in a browser (sidebar, login, a form with showDirty, dropdown menus, toasts), then run `/impeccable clarify src/pages/Login.tsx`.
+
+### Auth Response Envelope Normalization (2026-11-10)
+
+- Status: implemented in `src/features/auth/auth.service.ts`. Login, refresh and ME now normalize supported user response envelopes before session application; malformed payloads throw into the existing retryable query error path.
+- Validation: source and documentation diff inspected; tests and build were not run.
+- Next action: retry the affected page against the configured API. If the service returns a different user shape, inspect its response and add that explicit contract.
+
+### Clinic Backend Alignment Plan (2026-11-10)
+
+- Status: approved and in implementation per `docs/plans/backend-auth-session-alignment.md`. Earlier generic response normalization is superseded as the intended design.
+- Confirmed scope: Sanctum auth/session alignment with `lying-in-clinic-backend`, shared `ApiResponse`/`PaginateResponse`/`MessageResponse`, Audit Logs migration, feature barrels and structural recommendations. Deployment uses separate frontend/API origins on the same site.
+- Evidence: backend source and live `http://localhost:8000/docs/openapi.yaml` inspected. Auth uses numeric user IDs, resource envelopes, CSRF bootstrap and 204 logout; no refresh endpoint exists. Audit source permits null subject types and empty-array change values beyond the documented schema.
+- Validation: planning/source and API documentation inspection only; application tests and browser auth flows not run in this planning turn.
+- No material scope questions remain. Plan includes exact response contracts, bounded 419 reconciliation without mutation replay, numeric user IDs, feature-owned auth types, explicit barrels and regression/browser validation.
+- Revision: added the four reusable feedback states, PendingState modal/card/page variants, bounded auth/DataTable adoption, accessibility and responsive visual validation. User selected branded vertical loading with static clinic icon and separate small spinner; rotating logo ring/glows will be removed during approved implementation.
+- Next action: user reviews `docs/plans/backend-auth-session-alignment.md` and approves or requests revisions. Application source was not changed in this planning turn.
