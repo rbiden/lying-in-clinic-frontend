@@ -1,5 +1,5 @@
 import { ShieldAlert } from 'lucide-react'
-import { Button } from '#/components/ui/Button'
+import { ErrorState } from '#/components/ErrorState'
 
 export function SessionErrorScreen({ retry }: { retry: () => void }) {
   return (
@@ -12,20 +12,15 @@ export function SessionErrorScreen({ retry }: { retry: () => void }) {
         <div className="absolute right-1/4 top-1/2 size-48 -translate-y-1/4 rounded-full bg-muted-foreground/15 blur-3xl sm:size-72" />
       </div>
 
-      <div role="alert" className="max-w-sm space-y-4 text-center">
-        <ShieldAlert
-          className="mx-auto size-10 text-primary"
-          aria-hidden="true"
-        />
-        <h1 className="font-heading text-5xl font-semibold">
-          Unable to check your session
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Check your connection and try again. Your session has been kept while
-          we reconnect.
-        </p>
-        <Button onClick={retry}>Retry</Button>
-      </div>
+      <ErrorState
+        className="max-w-sm"
+        icon={ShieldAlert}
+        headingLevel={1}
+        title="Unable to check your session"
+        titleClassName="text-5xl"
+        description="Check your connection and try again. Your session has been kept while we reconnect."
+        onRetry={retry}
+      />
     </main>
   )
 }

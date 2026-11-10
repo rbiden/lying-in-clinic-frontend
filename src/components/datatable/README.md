@@ -69,9 +69,12 @@ server mode; send server search/filter parameters through the query and service.
 
 Audit Logs demonstrates real pagination through
 `useAuditLogsQuery` → `AuditLogsService.GET_ALL` → shared Axios →
-`GET /v1/audit-logs?page=1&limit=10`. Its API supplies `data.items` and
-`data.pagination.total` in newest-first order; sorting/search/filter controls are
-not exposed. Axios base URL configuration follows the existing auth services.
+`GET /audit-logs?page=1&per_page=10` under the configured complete API prefix.
+Its resource response supplies `data` rows and `meta.total` in newest-first
+order. Exact `event` and inclusive UTC `from`/`to` calendar-date filters are
+supported; general search and sortable headers are disabled. The service maps
+shared table `limit` to `per_page` and sends only endpoint-owned parameters.
+Legacy audit URL search/sort/Action/Model values are stripped before restoration.
 `UsersTableExample` remains an unrouted server-mode example with a mock service.
 
 The audit hook directly returns TanStack Query's result and accepts partial

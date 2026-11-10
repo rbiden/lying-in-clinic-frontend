@@ -452,3 +452,44 @@ For authorized work, record outcome, status, priority, requirement/decision link
 - No material scope questions remain. Plan includes exact response contracts, bounded 419 reconciliation without mutation replay, numeric user IDs, feature-owned auth types, explicit barrels and regression/browser validation.
 - Revision: added the four reusable feedback states, PendingState modal/card/page variants, bounded auth/DataTable adoption, accessibility and responsive visual validation. User selected branded vertical loading with static clinic icon and separate small spinner; rotating logo ring/glows will be removed during approved implementation.
 - Next action: user reviews `docs/plans/backend-auth-session-alignment.md` and approves or requests revisions. Application source was not changed in this planning turn.
+
+### Backend Alignment Execution (2026-11-11)
+
+- Authorized: user explicitly requested implementation of the saved backend alignment plan and Impeccable for UI.
+- In progress: exact resource contracts, Sanctum session transport and audit migration; bounded feedback-state UI in parallel.
+- Baseline: all 147 tests pass. Typecheck already fails on casing, DateTimePicker/Tooltip/scroll-area and navigation assertions; full formatting check reports widespread existing drift. Preserve unrelated files.
+- Next action: complete scoped implementation, regression checks and browser verification.
+
+### Backend Alignment Delivery (2026-11-11)
+
+- Implementation finished for the authorized plan: Sanctum CSRF/direct auth endpoints, strict numeric UserResource schema/cache, void logout, no refresh or replay, guarded 419 recovery, backend Audit Logs filters/resource pagination, explicit feature barrels and reusable feedback states with bounded auth/DataTable adoption.
+- Added regression for an in-flight focus ME after CSRF recovery fails; ME is canceled while the CSRF prerequisite remains unresolved, so Retry cannot disappear. Independent auth concurrency review confirmed the fix and found no further issues in its scope.
+- Automated evidence: all 179 tests pass; production build passes with the existing chunk-size warning; changed-source ESLint and changed-file Prettier pass. Full typecheck retains only baseline casing, DateTimePicker/Tooltip/scroll-area and navigation assertion errors. Full lint retains baseline skill parser and calendar/sidebar import errors; full formatting has existing repository drift.
+- Preview evidence: isolated docs/feedback-preview.html and TSX entry return HTTP 200 through Vite. DOM tests cover feedback semantics, retry/disabled behavior, compatibility, table slots/retained rows and real Login backend 422 field messages. No rendered screenshot/accessibility claim.
+- Unverified: CUA browser/native host unavailable; fallback browser packages/cache absent in inspected common paths. Responsive/contrast/reduced-motion/keyboard rendering checks remain pending. Authenticated cookie/CORS, two-tab and live admin/staff checks explicitly deferred by user steering.
+- Next action: review the saved isolated preview when browser access is available; resume live auth validation when requested. No backend/env/dependency changes, commits or pushes.
+- Configuration check: ignored local `.env` has an obsolete API prefix. It was not edited. Set `VITE_API_BASE_URL=http://localhost:8000/api/v1` and restart Vite before live backend verification.
+
+### Login Reference Recreation (2026-11-11)
+
+- Status: implemented in Login.tsx and scoped Login.css, using the supplied login-baby.png. CLINIC sits above the existing floating form on a white canvas; large baby cutout anchors the right edge. Narrow screens reserve image space below the form.
+- Validation: all 179 tests pass, production build passes with existing chunk warning, Login.tsx ESLint and scoped Prettier pass, and diff whitespace check passes. Typecheck retains existing casing/component/route errors; full lint retains 15 existing errors and full formatting reports 236 existing files.
+- Browser verification: browser host unavailable; native browser preview was stopped because Computer Use could not verify the current browser URL. No rendered desktop/mobile or keyboard claim is made.
+- Removed the unused generated clinic-room copy from public/images; its original remains in the generated-images folder. The user-supplied baby asset is preserved.
+- Next action: inspect /login at desktop/mobile widths when browser access works; no auth, backend, or unrelated application edits are required for this layout.
+- Follow-up: moved all login styling into responsive Tailwind classes directly in Login.tsx and removed Login.css/import, as requested. Preserved current image height and form behavior. Production build, Login.tsx lint/format and scoped diff checks pass; existing chunk-size warning remains. No runtime logic changed; prior 179-test result was not rerun for this styling-only conversion. Rendered browser verification remains pending.
+
+### Split Login Redesign (2026-11-11)
+
+- Implemented latest reference with user-directed form on the left and supplied login-background.png on the right. Restored full clinic brand, welcome heading, compact Sign in action and administrator-access guidance. All styling stays in Tailwind; responsive layout stacks the image below the form.
+- Validation: production build, Login.tsx ESLint/Prettier and 21 auth/layout tests pass; existing bundle-size warning remains. No new runtime authentication logic. Rendered browser checks remain unverified because the prior browser access attempt was blocked by URL verification.
+- Next action: inspect /login at desktop/tablet/mobile widths when browser access is available. No commit or backend change.
+- Fullscreen revision: photograph covers the entire login screen behind an inset, rounded and bordered white form section on the left. All styling is inline Tailwind. Production build, scoped ESLint/Prettier and diff checks pass; existing bundle warning remains. Styling-only change; auth tests were not repeated. Browser rendering remains unverified.
+- Flexbox correction: replaced the page grid with responsive flex-col/md:flex-row, a 47.5% desktop form basis and a flexible image-copy region. Preserved current user edits to overlay opacity, form width and padding. Build and scoped lint/format pass; no auth logic changed or tests repeated.
+
+### Configurable Branding (2026-11-11)
+
+- Implemented validated env-backed app name, optional short name, welcome/login/access copy, multiline tagline, image-panel description, copyright owner and workspace label. Login, sidebar/accessibility labels and browser title consume configuration. Defaults are centralized; .env.example and README document rebranding.
+- Validation: 15 env/branding tests pass. Full suite: 183 pass, 1 fails because the pre-existing user-edited Login handler no longer maps backend 422 errors into fieldErrors; that handler is preserved. Scoped ESLint passes after fixing Vite config typing; scoped formatting passes. Typecheck retains existing casing/component/navigation errors.
+- Custom-brand production build passed and generated Northside &amp; Care as the escaped HTML title. Default production build restored afterward. Existing chunk warning remains; browser rendering is unverified.
+- Next action: set desired branding variables in local/deployment env, then restart Vite or rebuild. Resolve the unrelated Login 422 regression separately. No local secrets/env files, backend, dependencies, commits or pushes changed.

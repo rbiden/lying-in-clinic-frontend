@@ -1,16 +1,15 @@
-import { isAxiosError } from 'axios'
+import { isAxiosError, isCancel } from 'axios'
 import type { QueryClient } from '@tanstack/react-query'
-import type { AuthUser } from '#/routes/types'
 import type { ApiResponse } from '#/types'
 import { queryClient } from '#/lib/query-client'
 import { env } from '#/lib/env'
 import { useAuthStore } from './auth.store'
 import { SessionChangeSchema } from './auth.schema'
-import type { SessionChange } from './auth.schema'
+import type { AuthUser, SessionChange } from './auth.schema'
 
 export type { SessionChange } from './auth.schema'
 
-export type SessionResponse = ApiResponse<{ user: AuthUser }>
+export type SessionResponse = ApiResponse<AuthUser>
 export const SESSION_STORAGE_KEY = 'inventory:session-change'
 
 export const authKeys = {
@@ -51,7 +50,7 @@ export function applySession(
   const state = useAuthStore.getState()
   if (version !== state.version) return
 
-  if (state.user?.id !== response.data.user.id) {
+  if (state.user?.id !== response.data.id) {
     if (state.user) invalidateSessionWork(client)
 
     client.removeQueries({
@@ -62,7 +61,7 @@ export function applySession(
 
   if (client.getQueryData(authKeys.me()) !== response)
     client.setQueryData(authKeys.me(), response)
-  state.setAuth(response.data.user)
+  state.setAuth(response.data)
 }
 
 export function endSession(
@@ -88,6 +87,7 @@ export function handleSessionFailure(
   client: QueryClient = queryClient,
   broadcast = false,
 ) {
+  if (isCancel(error)) return
   if (isAxiosError(error) && error.response?.status === 401) {
     endSession(
       useAuthStore.getState().logoutCause ?? 'expired',

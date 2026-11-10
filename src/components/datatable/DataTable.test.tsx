@@ -48,7 +48,7 @@ it('leaves server pagination under caller control when a response is empty', asy
   const render = async (status: {
     isLoading?: boolean
     isFetching?: boolean
-    error?: unknown
+    error?: Error | null
   }) => {
     await act(async () =>
       root.render(
@@ -174,4 +174,109 @@ it('selects only the visible client page and preserves selections across pages',
   await click('[aria-label="Next page"]')
   await click('[aria-label="Select all selectable rows on this page"]')
   expect(container.querySelector('output')?.textContent).toBe('4,1,2,3')
+})
+
+it('keeps loading, error and empty announcements exclusive and preserves valid table skeleton cells', async () => {
+  const retry = vi.fn()
+  const resetFilters = vi.fn()
+  const table: TableInstance = {
+    state: { page: 1, limit: 2, sortField: null, sortType: null },
+    setPage: vi.fn(),
+    setLimit: vi.fn(),
+    setSort: vi.fn(),
+    resetFilters,
+  }
+  const render = async (status: {
+    isLoading?: boolean
+    isFetching?: boolean
+    error?: Error | null
+  }) => {
+    await act(async () =>
+      root.render(
+        <DataTable
+          table={table}
+          rows={[]}
+          columns={columns}
+          getRowId={(row) => row.id}
+          onRetry={retry}
+          totalCount={0}
+          {...status}
+        />,
+      ),
+    )
+  }
+  await render({ isLoading: true })
+  expect(
+    container.querySelectorAll('tbody > tr > td > [data-slot="skeleton"]'),
+  ).toHaveLength(2)
+  expect(container.querySelectorAll('[role="status"]')).toHaveLength(1)
+  expect(
+    container.querySelector('[role="status"]')?.closest('[aria-busy="true"]'),
+  ).toBeNull()
+  expect(container.textContent).not.toContain('No records found.')
+  await render({ isFetching: true, error: new Error('old error') })
+  expect(container.querySelector('[role="alert"]')).toBeNull()
+  expect(container.textContent).not.toContain('No records found.')
+  await render({ error: new Error('offline') })
+  expect(container.querySelectorAll('[role="alert"]')).toHaveLength(1)
+  expect(container.textContent).not.toContain('No records found.')
+  await act(async () =>
+    container
+      .querySelector<HTMLButtonElement>('[role="alert"] button')!
+      .click(),
+  )
+  expect(retry).toHaveBeenCalledOnce()
+  await render({})
+  expect(container.textContent).toContain('No records found.')
+  await act(async () =>
+    [...container.querySelectorAll('button')]
+      .find((button) => button.textContent === 'Clear Filters')!
+      .click(),
+  )
+  expect(resetFilters).toHaveBeenCalledOnce()
+})
+
+it('preserves custom empty/error content and retained rows while announcing a refetch once', async () => {
+  const onRowClick = vi.fn()
+  const table: TableInstance = {
+    state: { page: 1, limit: 10, sortField: null, sortType: null },
+    setPage: vi.fn(),
+    setLimit: vi.fn(),
+    setSort: vi.fn(),
+  }
+  const render = async (
+    data: Item[],
+    status: { isFetching?: boolean; error?: Error | null },
+  ) => {
+    await act(async () =>
+      root.render(
+        <DataTable
+          table={table}
+          rows={data}
+          totalCount={data.length}
+          columns={columns}
+          getRowId={(row) => row.id}
+          emptyContent={<span>Custom empty</span>}
+          errorContent={<span>Custom recovery</span>}
+          onRowClick={onRowClick}
+          {...status}
+        />,
+      ),
+    )
+  }
+  await render([], {})
+  expect(container.textContent).toContain('Custom empty')
+  await render(rows, { isFetching: true })
+  expect(names()).toEqual(['Beta', 'Gamma', 'Alpha', 'Delta'])
+  expect(container.querySelectorAll('[role="status"]')).toHaveLength(1)
+  expect(container.querySelector('[role="status"]')?.textContent).toBe(
+    'Updating records',
+  )
+  await act(async () =>
+    container.querySelector<HTMLTableRowElement>('tbody tr')!.click(),
+  )
+  expect(onRowClick).not.toHaveBeenCalled()
+  await render(rows, { error: new Error('offline') })
+  expect(container.textContent).toContain('Custom recovery')
+  expect(names()).toEqual(['Beta', 'Gamma', 'Alpha', 'Delta'])
 })

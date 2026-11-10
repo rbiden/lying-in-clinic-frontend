@@ -15,6 +15,7 @@ const names = [
   'Casey Chua',
   'Jordan Yap',
 ]
+
 const users: ExampleUser[] = Array.from({ length: 37 }, (_, index) => ({
   id: `user-${index + 1}`,
   name: `${names[index % names.length]}${index >= names.length ? ` ${Math.floor(index / names.length) + 1}` : ''}`,

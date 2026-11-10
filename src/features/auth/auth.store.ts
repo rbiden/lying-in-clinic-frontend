@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { AuthUser } from '../../routes/types'
+import type { AuthUser } from './auth.schema'
 
 export interface AuthState {
   user: AuthUser | null

@@ -1,14 +1,7 @@
 import type { ComponentType, ReactNode } from 'react'
 import type { RouteObject, Location, UIMatch } from 'react-router'
 import type { LucideIcon } from 'lucide-react'
-
-export interface AuthUser {
-  id: string
-  name?: string
-  fullName?: string
-  email: string
-  role?: string
-}
+import type { AuthUser } from '#/features/auth/auth.schema'
 
 export interface GuardContext {
   user: AuthUser | null

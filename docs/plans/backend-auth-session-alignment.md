@@ -1,8 +1,8 @@
 # Implementation Plan: Backend Auth and Session Alignment
 
-Status: **Proposed, awaiting explicit implementation approval.**
+Status: **Implemented; automated checks completed, rendered/live verification pending.**
 
-Confirmed loading direction: branded vertical status. The plan is complete and proposed; implementation is not yet approved.
+Confirmed loading direction: branded vertical status. User explicitly requested implementation and Impeccable for the affected UI.
 
 Date: 2026-11-10. Revised to include reusable feedback states. Application source was inspected, not changed or tested for this plan.
 
@@ -28,18 +28,18 @@ The running [Swagger reference](http://localhost:8000/docs#/) and [OpenAPI YAML]
 
 Implementation was cross-checked in backend `routes/api.php`, `bootstrap/app.php`, `AuthController`, `AuthService`, `UserResource`, `EnsureActiveStaff`, `AdminController`, `AdminRequest`, `AuditLogResource`, models/migrations, CORS/Sanctum configuration, and `tests/Feature/SecurityBoundaryTest.php`. Installed Laravel paginator/resource source confirms the pagination envelope. Backend tests were read, not executed.
 
-| Concern | Current frontend | Backend contract / proposed correction |
-| --- | --- | --- |
-| Auth paths | `/v1/auth/login`, `/refresh`, `/me`, `/logout` | `/api/v1/login`, `/api/v1/me`, `/api/v1/logout`; no refresh route |
-| CSRF | No initialization | `GET /sanctum/csrf-cookie` before login; XSRF cookie/header on mutations |
-| User response | `success`, `message`, `data.user`; accepts several guessed forms | `{ data: { id, name, email, role, active } }` |
-| User ID | String | Numeric integer; keep numeric in session/cache |
-| User properties | Optional role/name, optional fullName | Required name/email, role `admin` or `staff`, boolean active |
-| Logout | JSON response assumed | HTTP 204, no body; return `void` |
-| Protected 401 | Refresh and replay | Expire local session; no refresh call or request replay |
-| Pagination | `data.items`, `data.pagination` | Resource collection `{ data: T[], links, meta }` |
-| Audit request | limit/search/sort/action/model | page/per_page/from/to/event; fixed descending ID order |
-| Audit display | String IDs, nested user names, action/model/createdAt | Numeric IDs, nullable actor/subject, event/subject_type/occurred_at |
+| Concern         | Current frontend                                                 | Backend contract / proposed correction                                   |
+| --------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Auth paths      | `/v1/auth/login`, `/refresh`, `/me`, `/logout`                   | `/api/v1/login`, `/api/v1/me`, `/api/v1/logout`; no refresh route        |
+| CSRF            | No initialization                                                | `GET /sanctum/csrf-cookie` before login; XSRF cookie/header on mutations |
+| User response   | `success`, `message`, `data.user`; accepts several guessed forms | `{ data: { id, name, email, role, active } }`                            |
+| User ID         | String                                                           | Numeric integer; keep numeric in session/cache                           |
+| User properties | Optional role/name, optional fullName                            | Required name/email, role `admin` or `staff`, boolean active             |
+| Logout          | JSON response assumed                                            | HTTP 204, no body; return `void`                                         |
+| Protected 401   | Refresh and replay                                               | Expire local session; no refresh call or request replay                  |
+| Pagination      | `data.items`, `data.pagination`                                  | Resource collection `{ data: T[], links, meta }`                         |
+| Audit request   | limit/search/sort/action/model                                   | page/per_page/from/to/event; fixed descending ID order                   |
+| Audit display   | String IDs, nested user names, action/model/createdAt            | Numeric IDs, nullable actor/subject, event/subject_type/occurred_at      |
 
 `EnsureActiveStaff` returns **401** for inactive users or mismatched `auth_version`. Admin authorization returns **403** for an authenticated non-admin. Invalid credentials are **422** with field errors, not an expired-session 401.
 
@@ -96,21 +96,21 @@ Add an exact auth-response schema in `auth.schema.ts`, reusing the existing Zod 
 
 ### Session and failure behavior
 
-| Event | Proposed behavior |
-| --- | --- |
-| Startup, focus/reconnect, explicit Retry, tab marker | Existing ME query verifies the server cookie; successful `{data:user}` updates cache/store |
-| Login success | Apply the validated user, seed the same ME envelope, publish login marker, let layout restore safe return URL |
-| Login 422 | Show backend validation message/field details; remain on login |
-| Login 419 | Show failure; next explicit submission initializes CSRF again |
-| Logout 204 | Clear account query data and user, publish logout, redirect to `/login` without return URL |
-| Logout 401 | Server already considers the request unauthenticated; complete local logout cleanup |
-| Logout 419/network/5xx | Report failure and retain session; next explicit logout initializes CSRF again; do not claim server logout succeeded |
-| Protected request 401 | End the current local session as expired; clear account data, preserve safe return URL, no replay |
-| Protected mutation 419 | Surface the failed action, reacquire CSRF, and reconcile through ME without replaying the mutation; ME 401 expires the session, ME success retains it for explicit action retry, and transient ME failure uses the retry screen |
-| Protected 403 | Show permission error for that operation/page; retain authenticated session |
-| ME timeout/network/5xx, malformed 200 | Existing session error/retry state; preserve known user, block protected content |
-| 409/422/429 on other operations | Surface backend error; do not globally log out or replay |
-| Obsolete response/failure after account change | Cancel/ignore using existing version guard before state/cache changes |
+| Event                                                | Proposed behavior                                                                                                                                                                                                               |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Startup, focus/reconnect, explicit Retry, tab marker | Existing ME query verifies the server cookie; successful `{data:user}` updates cache/store                                                                                                                                      |
+| Login success                                        | Apply the validated user, seed the same ME envelope, publish login marker, let layout restore safe return URL                                                                                                                   |
+| Login 422                                            | Show backend validation message/field details; remain on login                                                                                                                                                                  |
+| Login 419                                            | Show failure; next explicit submission initializes CSRF again                                                                                                                                                                   |
+| Logout 204                                           | Clear account query data and user, publish logout, redirect to `/login` without return URL                                                                                                                                      |
+| Logout 401                                           | Server already considers the request unauthenticated; complete local logout cleanup                                                                                                                                             |
+| Logout 419/network/5xx                               | Report failure and retain session; next explicit logout initializes CSRF again; do not claim server logout succeeded                                                                                                            |
+| Protected request 401                                | End the current local session as expired; clear account data, preserve safe return URL, no replay                                                                                                                               |
+| Protected mutation 419                               | Surface the failed action, reacquire CSRF, and reconcile through ME without replaying the mutation; ME 401 expires the session, ME success retains it for explicit action retry, and transient ME failure uses the retry screen |
+| Protected 403                                        | Show permission error for that operation/page; retain authenticated session                                                                                                                                                     |
+| ME timeout/network/5xx, malformed 200                | Existing session error/retry state; preserve known user, block protected content                                                                                                                                                |
+| 409/422/429 on other operations                      | Surface backend error; do not globally log out or replay                                                                                                                                                                        |
+| Obsolete response/failure after account change       | Cancel/ignore using existing version guard before state/cache changes                                                                                                                                                           |
 
 Avoid double expiration when an interceptor handles ME failure and the boundary observes the same error: let the ME query/boundary own ME reconciliation, while the interceptor handles ordinary protected-request auth failures. Login/logout/CSRF have explicit handling. Reuse `handleSessionFailure` and `endSession` rather than creating another lifecycle owner. Preserve cancellation as cancellation, not as a session error.
 
@@ -136,12 +136,12 @@ Keep these as four small presentation components directly under `src/components/
 
 Inspected foundations: `LoadingScreen.tsx`, the user-edited `SessionErrorScreen.tsx`, `Empty.tsx` and its public `EmptyProps`, DataTable's inline state markup, and existing `ui/Button.tsx`, `ui/Card.tsx`, `ui/Dialog.tsx`, and `ui/skeleton.tsx`. `shadcn info --json` confirms Base UI, base-nova, Lucide, Tailwind v4; the CLI component list omits several uppercase local files, so filesystem inspection remains authoritative. Spinner, Alert, and registry Empty primitives are absent. During approved implementation, inspect their matching registry output and add only those missing primitives, preserving local casing/import conventions and existing Button/Card/Skeleton. No bulk overwrite or preset reset.
 
-| Component | Proposed typed contract and defaults | Composition and ownership |
-| --- | --- | --- |
-| `LoadingState` | `title?: ReactNode` (default `Loading`), `description?: ReactNode`, `size?: 'sm' \| 'md' \| 'lg'` (md), `className?`, `titleClassName?`, `descriptionClassName?` | shadcn Spinner beside the status text with optional supporting description; no invented percentage, timeout, full-screen wrapper, or forced brand icon. The session wrapper owns its static clinic mark and heading. |
-| `ErrorState` | `title?: ReactNode` (default `Unable to load content`), `description?: ReactNode` (default `Please try again.`), `onRetry?: () => void`, `retryLabel?: string` (Retry), `retrying?: boolean` (false), optional decorative `icon?: LucideIcon`, `className?`, `titleClassName?`, `descriptionClassName?`, `headingLevel?: 1 \| 2 \| 3` (2) | Alert composition plus existing Button and Spinner when retrying. Render retry only with a handler; disable it while retrying. Callers pass safe display text, not raw exception objects. |
-| `PendingState` | `variant?: 'modal' \| 'card' \| 'page'` (card), `label?: string` (Loading content), `className?` | Existing Skeleton, Card composition where a card surface is appropriate, and Tailwind grid/flex utilities. Deterministic skeleton layouts; no fake text, randomized widths, or focusable placeholders. |
-| `EmptyState` | Reuse the complete existing `EmptyProps` API, including size, default/dashed/ghost variants, icon, actions, children, and class-name slots | Compose registry Empty primitives and current Button/action contract. Make `Empty.tsx` a compatibility re-export/facade over this implementation; retain existing `Empty` export/types without maintaining a second renderer. |
+| Component      | Proposed typed contract and defaults                                                                                                                                                                                                                                                                                                      | Composition and ownership                                                                                                                                                                                                     |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LoadingState` | `title?: ReactNode` (default `Loading`), `description?: ReactNode`, `size?: 'sm' \| 'md' \| 'lg'` (md), `className?`, `titleClassName?`, `descriptionClassName?`                                                                                                                                                                          | shadcn Spinner beside the status text with optional supporting description; no invented percentage, timeout, full-screen wrapper, or forced brand icon. The session wrapper owns its static clinic mark and heading.          |
+| `ErrorState`   | `title?: ReactNode` (default `Unable to load content`), `description?: ReactNode` (default `Please try again.`), `onRetry?: () => void`, `retryLabel?: string` (Retry), `retrying?: boolean` (false), optional decorative `icon?: LucideIcon`, `className?`, `titleClassName?`, `descriptionClassName?`, `headingLevel?: 1 \| 2 \| 3` (2) | Alert composition plus existing Button and Spinner when retrying. Render retry only with a handler; disable it while retrying. Callers pass safe display text, not raw exception objects.                                     |
+| `PendingState` | `variant?: 'modal' \| 'card' \| 'page'` (card), `label?: string` (Loading content), `className?`                                                                                                                                                                                                                                          | Existing Skeleton, Card composition where a card surface is appropriate, and Tailwind grid/flex utilities. Deterministic skeleton layouts; no fake text, randomized widths, or focusable placeholders.                        |
+| `EmptyState`   | Reuse the complete existing `EmptyProps` API, including size, default/dashed/ghost variants, icon, actions, children, and class-name slots                                                                                                                                                                                                | Compose registry Empty primitives and current Button/action contract. Make `Empty.tsx` a compatibility re-export/facade over this implementation; retain existing `Empty` export/types without maintaining a second renderer. |
 
 Pending variants represent **content shape**, not asynchronous lifecycle or overlay ownership:
 
@@ -244,24 +244,24 @@ Confirmed session-loading composition: a centered vertical stack on a plain ligh
 
 ## Files / modules affected
 
-| Files | Purpose |
-| --- | --- |
-| `src/types/api.types.ts` (new), `common.types.ts`, `index.ts` | Own and export actual API contracts; remove old generic envelope |
-| `src/features/auth/auth.schema.ts`, `auth.service.ts`, `auth.query.ts`, `auth.session.ts`, `auth.store.ts` | Exact user schema, endpoints/CSRF, void logout, cache shape, removal of refresh |
-| `src/features/auth/AuthSessionBoundary.tsx`, `use-session.ts` | Only required reconciliation/error changes; preserve lifecycle ownership |
-| `src/lib/axios.ts`, `env.ts`, `env.test.ts`, `.env.example` | Base-prefix contract, XSRF, auth request classification, no replay, documented config |
-| `src/routes/types.ts`, affected route tests | Import feature-owned user type and migrate numeric fixtures |
-| `src/features/auth/index.ts`, `src/features/users/index.ts`, `src/features/audit-logs/index.ts` (new) | Explicit usable feature exports |
-| `src/features/audit-logs/audit-logs.types.ts` (new), service/query, `src/pages/AuditLogs.tsx` | Laravel audit rows, parameters, filters and pagination |
-| `src/components/layouts/{AuthLayout,GuestLayout}.tsx`, `src/routes/Guard.tsx`, `src/components/Sidebar.tsx`, `src/app/Providers.tsx`, `src/pages/Login.tsx` | Affected public imports and error/void-result consumption only, as needed |
-| `src/helpers/error.ts` | Typed message/422 field-error extraction only if needed; retain safe fallback behavior |
-| Auth HTTP/session/layout tests; audit service/query tests; env tests | Regression coverage for changed contracts and preserved session guarantees |
-| `src/features/auth/README.md`, audit/table usage documentation, agent records | Current session/backend configuration and migration status |
-| `src/components/{ErrorState,LoadingState,PendingState,EmptyState}.tsx` (new), `src/types/state.types.ts` (new) | Small typed presentation components, documented defaults and skeleton variants |
-| `src/components/ui/{spinner,alert,empty}.tsx` (new if still absent), `ui/skeleton.tsx` as needed | Matching shadcn primitives; reduced-motion support without overwriting existing primitives |
-| `src/components/{LoadingScreen,Empty}.tsx`, `src/features/auth/SessionErrorScreen.tsx`, `src/components/datatable/DataTable.tsx` | Bounded adoption and compatibility; preserve user-edited heading and existing wrapper APIs |
-| `src/components/index.ts`, `src/types/index.ts`, `src/types/empty.types.ts` only if needed | Public state exports and compatible existing Empty types |
-| `src/components/states.test.tsx` (new), `vitest.config.ts`, existing DataTable/auth tests; `src/components/states.md` (new) | Interaction/semantic regression coverage, narrow test discovery and variant usage examples |
+| Files                                                                                                                                                       | Purpose                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `src/types/api.types.ts` (new), `common.types.ts`, `index.ts`                                                                                               | Own and export actual API contracts; remove old generic envelope                           |
+| `src/features/auth/auth.schema.ts`, `auth.service.ts`, `auth.query.ts`, `auth.session.ts`, `auth.store.ts`                                                  | Exact user schema, endpoints/CSRF, void logout, cache shape, removal of refresh            |
+| `src/features/auth/AuthSessionBoundary.tsx`, `use-session.ts`                                                                                               | Only required reconciliation/error changes; preserve lifecycle ownership                   |
+| `src/lib/axios.ts`, `env.ts`, `env.test.ts`, `.env.example`                                                                                                 | Base-prefix contract, XSRF, auth request classification, no replay, documented config      |
+| `src/routes/types.ts`, affected route tests                                                                                                                 | Import feature-owned user type and migrate numeric fixtures                                |
+| `src/features/auth/index.ts`, `src/features/users/index.ts`, `src/features/audit-logs/index.ts` (new)                                                       | Explicit usable feature exports                                                            |
+| `src/features/audit-logs/audit-logs.types.ts` (new), service/query, `src/pages/AuditLogs.tsx`                                                               | Laravel audit rows, parameters, filters and pagination                                     |
+| `src/components/layouts/{AuthLayout,GuestLayout}.tsx`, `src/routes/Guard.tsx`, `src/components/Sidebar.tsx`, `src/app/Providers.tsx`, `src/pages/Login.tsx` | Affected public imports and error/void-result consumption only, as needed                  |
+| `src/helpers/error.ts`                                                                                                                                      | Typed message/422 field-error extraction only if needed; retain safe fallback behavior     |
+| Auth HTTP/session/layout tests; audit service/query tests; env tests                                                                                        | Regression coverage for changed contracts and preserved session guarantees                 |
+| `src/features/auth/README.md`, audit/table usage documentation, agent records                                                                               | Current session/backend configuration and migration status                                 |
+| `src/components/{ErrorState,LoadingState,PendingState,EmptyState}.tsx` (new), `src/types/state.types.ts` (new)                                              | Small typed presentation components, documented defaults and skeleton variants             |
+| `src/components/ui/{spinner,alert,empty}.tsx` (new if still absent), `ui/skeleton.tsx` as needed                                                            | Matching shadcn primitives; reduced-motion support without overwriting existing primitives |
+| `src/components/{LoadingScreen,Empty}.tsx`, `src/features/auth/SessionErrorScreen.tsx`, `src/components/datatable/DataTable.tsx`                            | Bounded adoption and compatibility; preserve user-edited heading and existing wrapper APIs |
+| `src/components/index.ts`, `src/types/index.ts`, `src/types/empty.types.ts` only if needed                                                                  | Public state exports and compatible existing Empty types                                   |
+| `src/components/states.test.tsx` (new), `vitest.config.ts`, existing DataTable/auth tests; `src/components/states.md` (new)                                 | Interaction/semantic regression coverage, narrow test discovery and variant usage examples |
 
 Do not edit ignored local env files automatically. Supply the exact new example values and flag obsolete local values during validation. No Vite proxy is needed for the confirmed separate-origin setup.
 
@@ -303,8 +303,8 @@ Visually verify Error/Loading/Empty and all PendingState variants at desktop and
 
 ## Open questions
 
-None remain. Branded vertical loading is confirmed. Application implementation requires explicit approval of this completed revised plan.
+None remain. Branded vertical loading is confirmed. Implementation was explicitly authorized; the user subsequently prioritized building the UI and deferred authenticated live-browser checks.
 
 ## TL;DR
 
-Replace guessed envelopes and refresh-token behavior with Laravel Sanctum CSRF/cookie authentication, exact resource/error types, numeric users, and void logout. Align Audit Logs and feature exports, then add reusable ErrorState, spinner LoadingState, skeleton PendingState variants, and EmptyState using shadcn/Tailwind. Redesign session loading with the confirmed static clinic icon above heading and a small spinner beside status text, without the logo ring or glows. Preserve session guarantees, the user's error heading, existing Empty API, custom table slots, and refetch behavior. Verify with targeted tests, repository checks, real browser cookie/CORS flows, and responsive/accessibility state previews. Next action: review and explicitly approve this completed revised plan.
+Implemented Laravel Sanctum CSRF/cookie authentication, exact resource/error types, numeric users, void logout, Audit Logs migration, explicit feature barrels and reusable feedback states. Session guarantees, the user's error heading, existing Empty API, custom table slots and refetch behavior are preserved. Automated tests and production build pass; unrelated baseline lint/type/format failures remain. Next action: inspect the isolated preview when browser access is restored and run live cookie/CORS checks when the user resumes authenticated verification.

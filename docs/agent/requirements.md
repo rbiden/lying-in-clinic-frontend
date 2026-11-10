@@ -224,7 +224,6 @@ No additional product requirements or implementation scope are inferred from the
 - Explicitly authorized: locate local faculty-evaluation-frontend and implement its DataTable, hooks, helpers, and necessary supporting files here; install required libraries if missing.
 - Preserve unrelated working edits and existing login/audit functionality. Source repository is read-only for this port.
 
-
 ### Impeccable Init: Product Update (2026-11-09)
 
 - Supersedes the "Open decisions" line under the earlier init record for permissions, catalogs and hosting:
@@ -243,3 +242,28 @@ No additional product requirements or implementation scope are inferred from the
 - Mandatory fonts: Fraunces for titles and headers; Nunito as the primary app font. Remove the unused Geist, IBM Plex Sans and Merriweather fonts (Inter, the previous primary, is replaced too).
 - Requested: update the legacy icon. Assumption (not confirmed by the user): the brand mark is the Lucide `Baby` icon, also used for the favicon.
 - Requested: add the status colour scheme to all components with colour variants.
+
+### Backend Alignment Implementation (2026-11-11)
+
+- Mandatory: implement the approved backend-auth-session-alignment plan; user explicitly requested Impeccable for the affected UI.
+- User steering: prioritize building the UI for now; authenticated live-browser checks are deferred. Do not request more account credentials in this pass.
+- Preserve exact backend contracts, existing session guarantees, scoped feedback adoption, and the user-edited session error heading.
+
+### Login Reference Recreation (2026-11-11)
+
+- Mandatory: recreate the supplied white-canvas login reference with a floating form at the left and the supplied `src/assets/images/background/login-baby.png` cutout at the right.
+- Mandatory: use `CLINIC` as the temporary wordmark, superseding the full-name branding requirement for this heading only; keep the existing Login.tsx form and authentication behavior.
+- Supersedes the earlier generated clinic-room image direction. Preserve the clinic theme and responsive form usability.
+- User correction: put login styling directly on components/elements with Tailwind utilities; do not use a separate login stylesheet.
+
+### Split Login Redesign (2026-11-11)
+
+- Supersedes the baby-cutout reference layout: use the supplied login-background.png and the new rounded split-screen reference.
+- Latest user correction places the form at the left; mirror the reference with the photographic panel at the right. Keep Tailwind styling directly on elements and retain working authentication.
+- Follow-up: expand the supplied image across the full login screen and add a rounded border to the white form section on the left.
+- User correction: use flexbox for the login page layout.
+
+### Configurable Branding (2026-11-11)
+
+- Mandatory: move app-name instances and branded labels into environment-backed configuration for easy rebranding.
+- Scope: rendered app name, browser title, sidebar name/home label and workspace label, login heading/descriptions/tagline/access guidance and footer owner. Preserve existing user layout and auth edits.

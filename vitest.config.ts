@@ -14,6 +14,7 @@ export default defineConfig({
       'src/helpers/zod/zod-helpers.spec.ts',
       'src/routes/*.test.{ts,tsx}',
       'src/components/datatable/*.test.tsx',
+      'src/components/states.test.tsx',
       'src/features/audit-logs/*.test.{ts,tsx}',
       'src/features/auth/*.test.{ts,tsx}',
       'src/lib/env.test.ts',

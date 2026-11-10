@@ -9,18 +9,16 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
-import {
-  ArrowDown,
-  ArrowUp,
-  ArrowUpDown,
-  GalleryVerticalEnd,
-  CalendarDays,
-} from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { columnSortField } from '@/helpers/table-query'
 import type { DataTableColumn, DataTableProps } from '@/types/datatable.types'
 import { Checkbox } from '../ui/Checkbox'
 import { Button } from '../ui/Button'
+import { Skeleton } from '../ui/skeleton'
+import { LoadingState } from '../LoadingState'
+import { ErrorState } from '../ErrorState'
+import { EmptyState } from '../EmptyState'
 import { DataTablePagination } from './DataTablePagination'
 import { DataTableActions } from './DataTableActions'
 
@@ -263,13 +261,14 @@ export function DataTable<TData>({
     <section
       className={cn('min-w-0 font-sans', className)}
       aria-label={caption}
-      aria-busy={busy}
     >
       <div className={cn('relative')}>
         <div
+          aria-busy={busy}
           className={cn(
             'overflow-x-auto bg-card h-full rounded-2xl p-1 border border-border',
             hasError && !busy && 'min-h-70',
+            busy && rows.length === 0 && 'min-h-70',
           )}
         >
           <table className="w-full text-left text-sm">
@@ -348,7 +347,7 @@ export function DataTable<TData>({
                     <tr key={index} aria-hidden="true">
                       {Array.from({ length: leafCount }, (_cell, cell) => (
                         <td key={cell} className="px-4 py-4">
-                          <div className="h-4 min-w-8 animate-pulse rounded bg-muted" />
+                          <Skeleton className="h-4 min-w-8" />
                         </td>
                       ))}
                     </tr>
@@ -415,20 +414,26 @@ export function DataTable<TData>({
                     </tr>
                   ))}
 
-              {!showSkeleton && visibleRows.length === 0 && (
+              {!busy && !hasError && visibleRows.length === 0 && (
                 <tr>
                   <td
                     colSpan={Math.max(1, leafCount)}
                     className="px-4 py-12 text-center text-muted-foreground"
                   >
                     <div className="flex flex-col w-full items-center justify-center gap-2">
-                      {emptyContent ?? 'No records found.'}
+                      {emptyContent ?? (
+                        <EmptyState
+                          title="No records found."
+                          icon={null}
+                          variant="ghost"
+                          size="sm"
+                        />
+                      )}
                       {resetFilters && (
                         <Button
                           type="button"
                           variant="outline"
                           onClick={resetFilters}
-                          disabled={busy || hasError}
                         >
                           Clear Filters
                         </Button>
@@ -442,30 +447,12 @@ export function DataTable<TData>({
         </div>
 
         {hasError && !busy && (
-          <div
-            role="alert"
-            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]"
-          >
-            <div className="relative mb-4 flex size-16 shrink-0 items-center justify-center">
-              <div
-                className="absolute inset-0 rounded-full border-2 border-destructive/15"
-                aria-hidden="true"
-              />
-              <div className="flex size-10 items-center justify-center rounded-xl border border-destructive/20 bg-card text-destructive shadow-sm">
-                <GalleryVerticalEnd className="size-5" aria-hidden="true" />
-              </div>
-            </div>
-            <p className="font-heading text-lg font-semibold text-foreground">
-              Unable to load records
-            </p>
-            <div className="mt-2 text-sm text-muted-foreground">
-              {errorContent ?? 'Please try again.'}
-            </div>
-            {onRetry && (
-              <Button className="mt-4" variant="outline" onClick={onRetry}>
-                Retry
-              </Button>
-            )}
+          <div className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]">
+            <ErrorState
+              title="Unable to load records"
+              description={errorContent ?? 'Please try again.'}
+              onRetry={onRetry}
+            />
           </div>
         )}
 
@@ -481,27 +468,16 @@ export function DataTable<TData>({
         )}
 
         {busy && rows.length === 0 && (
-          <div
-            className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="relative mb-4 flex size-16 shrink-0 items-center justify-center">
-              <div
-                className="absolute inset-0 rounded-full border-2 border-primary/15 border-t-primary motion-safe:animate-spin"
-                aria-hidden="true"
-              />
-              <div className="flex size-10 items-center justify-center rounded-xl border border-primary/20 bg-card text-primary shadow-sm">
-                <CalendarDays className="size-5" aria-hidden="true" />
-              </div>
-            </div>
-            <p className="font-heading text-lg font-semibold text-foreground">
-              Loading records
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">Please wait…</p>
+          <div className="absolute inset-1 z-10 flex flex-col items-center justify-center rounded-2xl bg-background/50 p-6 text-center backdrop-blur-[1px]">
+            <LoadingState title="Loading records" description="Please wait…" />
           </div>
         )}
       </div>
+      {showFetchingShimmer && (
+        <span role="status" aria-live="polite" className="sr-only">
+          Updating records
+        </span>
+      )}
       {showPagination && (
         <DataTablePagination
           state={state}

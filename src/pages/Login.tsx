@@ -1,72 +1,132 @@
-import { Baby, ShieldCheck, ArrowRight } from 'lucide-react'
+import { Baby } from 'lucide-react'
 import type { LoginDto } from '../features/auth'
 import { LoginSchema, useLoginMutation } from '../features/auth'
-import { GuestAtmosphere, FormCard, Input } from '#/components'
+import { FormCard, Input } from '#/components'
+import loginBackground from '#/assets/images/background/login-background.png'
 import { useMutationTools } from '#/hooks'
 import { toast } from 'sonner'
+import { useState } from 'react'
+import { brand } from '#/lib/brand'
 
 export const Login = () => {
   const { safeMutate } = useMutationTools()
   const { mutateAsync: loginApi } = useLoginMutation()
+  const [fieldErrors, setFieldErrors] = useState<
+    Partial<Record<keyof LoginDto, string>>
+  >({})
 
   const handleLogin = async (data: LoginDto) => {
+    setFieldErrors({})
     const { success, message } = await safeMutate(loginApi, data)
     if (!success) return toast.error(message)
   }
 
   return (
-    <main className="relative flex flex-col items-center justify-center h-full w-full min-h-[calc(100vh-2rem)] px-4">
-      <GuestAtmosphere />
+    <div className="relative isolate -m-4 flex min-h-svh w-[calc(100%+2rem)] flex-col bg-primary p-3 sm:p-5 sm:flex-row lg:p-7 items-center justify-center">
+      <img
+        className="pointer-events-none absolute inset-0 -z-20 size-full object-cover object-[58%_center] select-none"
+        src={loginBackground}
+        alt=""
+      />
 
-      {/* Brand Header Chip */}
-      <div className="relative z-10 mb-4 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3.5 py-1 text-sm font-medium text-primary shadow-xs backdrop-blur-md">
-        <Baby className="h-4 w-4" />
-        <span>POS & Inventory System</span>
-      </div>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-t from-primary/15 via-primary/75 to-primary/55"
+      />
 
-      <FormCard
-        schema={LoginSchema}
-        onSubmit={handleLogin}
-        headerClassName="mb-2"
-        title="Sign in to your account"
-        titleClassName="text-3xl font-black tracking-tight text-center"
-        description="Enter your credentials to access your inventory and POS workspace. All credentials are encrypted and secure."
-        descriptionClassName="text-center"
-        cardClassName="backdrop-blur-xl py-10 bg-card/85 border border-border/70 shadow-2xl shadow-primary/5 rounded-2xl"
-        className="relative z-10 flex justify-center items-center w-full"
-        contentClassName="space-y-4!"
-        size="md"
-        primaryAction={{
-          label: (
-            <span className="flex items-center gap-1 text-sm font-semibold font-heading">
-              Submit Credentials
-              <ArrowRight className="size-4" />
-            </span>
-          ),
-          className: 'w-full h-10 shadow-md shadow-primary/20',
-        }}
+      <section
+        className="flex min-w-0 flex-col h-fit rounded-sm border border-border bg-background p-6 lg:p-10 sm:w-xl lg:max-w-lg lg:w-full"
+        aria-labelledby="login-title"
       >
-        <Input
-          name="email"
-          type="email"
-          label="Email"
-          placeholder="admin@example.com"
-          wrapperClassName="m-auto"
-        />
-        <Input
-          name="password"
-          type="password"
-          label="Password"
-          placeholder="*************"
-          wrapperClassName="m-auto"
-        />
-      </FormCard>
+        <div className="flex items-center gap-2.5 text-primary">
+          <Baby aria-hidden="true" className="size-7" />
+          <span className="font-heading text-lg font-bold">{brand.name}</span>
+        </div>
 
-      {/* Subtle Security / Compliance Footer */}
-      <footer className="relative z-10 mt-6 flex items-center gap-1.5 text-xs text-muted-foreground/80">
-        <ShieldCheck className="h-3.5 w-3.5 text-primary/70" />
-        <span>Encrypted POS session • 2026 All rights reserved</span>
-      </footer>
-    </main>
+        <div className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-4 sm:gap-7 py-8 sm:py-14">
+          <header className="flex flex-col">
+            <h1
+              id="login-title"
+              className="text-3xl leading-tight font-semibold tracking-tight lg:text-6xl"
+            >
+              {brand.welcomeTitle}
+            </h1>
+            <p className="text-base leading-relaxed text-muted-foreground">
+              {brand.loginDescription}
+            </p>
+          </header>
+
+          <FormCard
+            schema={LoginSchema}
+            onSubmit={handleLogin}
+            aria-labelledby="login-title"
+            cardClassName="max-w-none gap-6 overflow-visible rounded-none bg-transparent py-0 shadow-none ring-0"
+            contentClassName="flex flex-col gap-5 px-0"
+            footerClassName="px-0"
+            size="sm"
+            primaryAction={{
+              label: 'Submit my credentials',
+              className: 'h-11 w-full',
+            }}
+          >
+            <Input
+              name="email"
+              type="email"
+              label="Email"
+              placeholder="Enter your email"
+              autoComplete="username"
+              wrapperClassName="w-full"
+              customMessage={
+                fieldErrors.email ? (
+                  <span role="alert" className="text-destructive">
+                    {fieldErrors.email}
+                  </span>
+                ) : null
+              }
+            />
+            <Input
+              name="password"
+              type="password"
+              label="Password"
+              placeholder="Enter your password"
+              autoComplete="current-password"
+              wrapperClassName="w-full"
+              customMessage={
+                fieldErrors.password ? (
+                  <span role="alert" className="text-destructive">
+                    {fieldErrors.password}
+                  </span>
+                ) : null
+              }
+            />
+          </FormCard>
+
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            {brand.accessHelp}
+          </p>
+        </div>
+
+        <footer className="flex items-center gap-1.5 text-xs leading-normal text-muted-foreground">
+          <span>
+            All rights reserved. {new Date().getFullYear()}{' '}
+            {brand.copyrightHolder}
+          </span>
+        </footer>
+      </section>
+
+      <aside
+        className="flex sm:min-h-64 min-w-0 flex-col sm:justify-end p-7 text-primary-foreground sm:p-10 lg:p-12"
+        aria-label={brand.name}
+      >
+        <div className="flex max-w-md flex-col gap-4 sm:pt-12 lg:pt-60">
+          <h2 className="whitespace-pre-line text-3xl leading-tight font-semibold tracking-tight sm:text-4xl lg:text-5xl">
+            {brand.tagline}
+          </h2>
+          <p className="max-w-sm text-sm sm:text-base leading-relaxed text-primary-foreground/90">
+            {brand.description}
+          </p>
+        </div>
+      </aside>
+    </div>
   )
 }

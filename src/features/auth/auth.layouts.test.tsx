@@ -14,6 +14,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { queryClient } from '#/lib/query-client'
 import { api } from '#/lib/axios'
 import { env } from '#/lib/env'
+import { Login } from '#/pages/Login'
 import { GuestLayout } from '#/components/layouts/GuestLayout'
 import { AuthLayout } from '#/components/layouts/AuthLayout'
 import { RouteGuard } from '#/routes/Guard'
@@ -21,11 +22,7 @@ import { AuthSessionBoundary } from './AuthSessionBoundary'
 import { AuthService } from './auth.service'
 import { useAuthStore } from './auth.store'
 import { useSession } from './use-session'
-import {
-  useLoginMutation,
-  useLogoutMutation,
-  useRefreshMutation,
-} from './auth.query'
+import { useLoginMutation, useLogoutMutation } from './auth.query'
 import {
   authKeys,
   invalidateSessionWork,
@@ -42,10 +39,14 @@ vi.mock('#/components/ui/sidebar', () => ({
   ),
 }))
 
-const response = (id = 'one'): SessionResponse => ({
-  success: true,
-  message: 'ok',
-  data: { user: { id, email: `${id}@example.com` } },
+const response = (id = 1): SessionResponse => ({
+  data: {
+    id,
+    name: 'Test User',
+    email: 'test@example.com',
+    role: 'admin',
+    active: true,
+  },
 })
 const unauthorized = () =>
   new AxiosError('no session', undefined, undefined, undefined, {
@@ -60,7 +61,6 @@ let root: ReturnType<typeof createRoot>
 let router: ReturnType<typeof createMemoryRouter>
 const mounted = vi.fn()
 const realMe = AuthService.ME
-const realRefresh = AuthService.REFRESH
 const originalAdapter = api.defaults.adapter
 
 function LoginActions() {
@@ -89,7 +89,7 @@ function LoginActions() {
 function Protected() {
   const session = useSession()
   const logout = useLogoutMutation()
-  const refresh = useRefreshMutation()
+
   useEffect(() => {
     mounted()
   }, [])
@@ -97,7 +97,6 @@ function Protected() {
     <div>
       Protected {session.user?.id}
       <button onClick={() => logout.mutate()}>Sign out</button>
-      <button onClick={() => refresh.mutate()}>Refresh session</button>
     </div>
   )
 }
@@ -114,12 +113,8 @@ beforeEach(() => {
   mounted.mockClear()
   vi.spyOn(AuthService, 'ME').mockResolvedValue(response())
   vi.spyOn(AuthService, 'LOGIN').mockResolvedValue(response())
-  vi.spyOn(AuthService, 'REFRESH').mockResolvedValue(response())
-  vi.spyOn(AuthService, 'LOGOUT').mockResolvedValue({
-    success: true,
-    message: 'ok',
-    data: { message: 'ok' },
-  })
+
+  vi.spyOn(AuthService, 'LOGOUT').mockResolvedValue(undefined)
   container = document.createElement('div')
   document.body.append(container)
   root = createRoot(container)
@@ -137,13 +132,15 @@ afterEach(async () => {
   vi.unstubAllGlobals()
 })
 
-async function mount(path: string, guarded = false) {
+async function mount(path: string, guarded = false, actualLogin = false) {
   router = createMemoryRouter(
     [
       {
         path: '/login',
         element: <GuestLayout />,
-        children: [{ index: true, element: <LoginActions /> }],
+        children: [
+          { index: true, element: actualLogin ? <Login /> : <LoginActions /> },
+        ],
       },
       {
         path: '/',
@@ -216,7 +213,7 @@ it('waits on cold reload before mounting protected children, including guarded d
   expect(container.textContent).toContain('Checking your session')
   expect(mounted).not.toHaveBeenCalled()
   await act(async () => resolve(response()))
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
   expect(router.state.location.pathname).toBe('/users')
   expect(AuthService.ME).toHaveBeenCalledOnce()
   expect(queryClient.getQueryData(authKeys.me())).toEqual(response())
@@ -225,7 +222,7 @@ it('waits on cold reload before mounting protected children, including guarded d
 it('restores an authenticated login visit and rejects unsafe return destinations', async () => {
   await mount('/login?redirect=//outside.example')
   expect(router.state.location.pathname).toBe('/')
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
 })
 
 it('returns to the original URL after login and centralizes explicit logout', async () => {
@@ -242,8 +239,6 @@ it('returns to the original URL after login and centralizes explicit logout', as
     search: '?page=2',
     hash: '#details',
   })
-  expect(queryClient.getQueryData(authKeys.me())).toEqual(response())
-  await click('Refresh session')
   expect(queryClient.getQueryData(authKeys.me())).toEqual(response())
   await click('Sign out')
   expect(router.state.location).toMatchObject({
@@ -265,10 +260,10 @@ it('offers Retry on temporary verification failures while retaining the known us
     focusManager.setFocused(true)
   })
   expect(container.textContent).toContain('Unable to check your session')
-  expect(useAuthStore.getState().user?.id).toBe('one')
+  expect(useAuthStore.getState().user?.id).toBe(1)
   expect(router.state.location.pathname).toBe('/users')
   await click('Retry')
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
 })
 
 it('handles a login event while on the guest layout without rebroadcasting it', async () => {
@@ -277,7 +272,7 @@ it('handles a login event while on the guest layout without rebroadcasting it', 
   expect(container.textContent).toContain('Sign in')
   const marker = await remote('login')
   expect(router.state.location.pathname).toBe('/users')
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
   expect(window.localStorage.getItem(SESSION_STORAGE_KEY)).toBe(marker)
 })
 
@@ -296,9 +291,9 @@ it('applies cross-tab logout without a return URL or echo event', async () => {
 it('clears former account data and remounts the page on account change', async () => {
   await mount('/users')
   queryClient.setQueryData(['private'], 'old account')
-  vi.mocked(AuthService.ME).mockResolvedValue(response('two'))
+  vi.mocked(AuthService.ME).mockResolvedValue(response(2))
   const marker = await remote('changed')
-  expect(container.textContent).toContain('Protected two')
+  expect(container.textContent).toContain('Protected 2')
   expect(queryClient.getQueryData(['private'])).toBeUndefined()
   expect(router.state.location.pathname).toBe('/users')
   expect(mounted).toHaveBeenCalledTimes(2)
@@ -346,7 +341,7 @@ it('does not restore an old user when an obsolete ME resolves after cross-tab lo
     .mockRejectedValue(unauthorized())
   await mount('/users')
   await remote('logout')
-  await act(async () => resolveOld(response('old')))
+  await act(async () => resolveOld(response(3)))
   expect(router.state.location).toMatchObject({
     pathname: '/login',
     search: '',
@@ -423,10 +418,10 @@ it('keeps protected children blocked until Retry verifies the retained user', as
   )
   await click('Retry')
   expect(container.textContent).toContain('Checking your session')
-  expect(container.textContent).not.toContain('Protected one')
-  expect(useAuthStore.getState().user?.id).toBe('one')
+  expect(container.textContent).not.toContain('Protected 1')
+  expect(useAuthStore.getState().user?.id).toBe(1)
   await act(async () => resolve(response()))
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
 })
 
 it('reuses fresh sessions on focus but always verifies received tab changes', async () => {
@@ -442,7 +437,7 @@ it('reuses fresh sessions on focus but always verifies received tab changes', as
 })
 
 it('forces startup verification even when the query cache is fresh', async () => {
-  queryClient.setQueryData(authKeys.me(), response('cached'))
+  queryClient.setQueryData(authKeys.me(), response(5))
   let resolve!: (value: SessionResponse) => void
   vi.mocked(AuthService.ME).mockImplementationOnce(
     () =>
@@ -453,14 +448,14 @@ it('forces startup verification even when the query cache is fresh', async () =>
   await mount('/users')
   expect(mounted).not.toHaveBeenCalled()
   expect(AuthService.ME).toHaveBeenCalledOnce()
-  await act(async () => resolve(response('current')))
-  expect(container.textContent).toContain('Protected current')
+  await act(async () => resolve(response(4)))
+  expect(container.textContent).toContain('Protected 4')
 })
 
 it('defers tab verification during login and applies the current cookie identity after it settles', async () => {
   vi.mocked(AuthService.ME)
     .mockRejectedValueOnce(unauthorized())
-    .mockResolvedValue(response('current'))
+    .mockResolvedValue(response(4))
   let resolveLogin!: (value: SessionResponse) => void
   vi.mocked(AuthService.LOGIN).mockImplementationOnce(
     () =>
@@ -472,8 +467,8 @@ it('defers tab verification during login and applies the current cookie identity
   await click('Sign in')
   const marker = await remote('changed')
   expect(AuthService.ME).toHaveBeenCalledOnce()
-  await act(async () => resolveLogin(response('obsolete')))
-  expect(useAuthStore.getState().user?.id).toBe('current')
+  await act(async () => resolveLogin(response(6)))
+  expect(useAuthStore.getState().user?.id).toBe(4)
   expect(window.localStorage.getItem(SESSION_STORAGE_KEY)).toBe(marker)
 })
 
@@ -481,9 +476,56 @@ it('keeps the current user and does not publish success when logout fails', asyn
   await mount('/users')
   vi.mocked(AuthService.LOGOUT).mockRejectedValueOnce(new Error('offline'))
   await click('Sign out')
-  expect(useAuthStore.getState().user?.id).toBe('one')
+  expect(useAuthStore.getState().user?.id).toBe(1)
   expect(router.state.location.pathname).toBe('/users')
   expect(window.localStorage.getItem(SESSION_STORAGE_KEY)).toBeNull()
+})
+
+it('shows backend 422 field details on the login form without authenticating', async () => {
+  vi.mocked(AuthService.ME).mockRejectedValue(unauthorized())
+  vi.mocked(AuthService.LOGIN).mockRejectedValue(
+    new AxiosError('Validation failed', undefined, undefined, undefined, {
+      status: 422,
+      statusText: 'Unprocessable Content',
+      headers: new AxiosHeaders(),
+      config: { headers: new AxiosHeaders() },
+      data: {
+        message: 'The supplied credentials are invalid.',
+        errors: {
+          email: ['Please check your email.'],
+          password: ['Please check your password.'],
+        },
+      },
+    }),
+  )
+  await mount('/login', false, true)
+  await act(async () => {
+    for (const [name, value] of [
+      ['email', 'test@example.com'],
+      ['password', 'example'],
+    ]) {
+      const input = container.querySelector<HTMLInputElement>(
+        `input[name="${name}"]`,
+      )!
+      Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )!.set!.call(input, value)
+      input.dispatchEvent(new Event('input', { bubbles: true }))
+      input.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+    container
+      .querySelector('form')!
+      .dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }))
+  })
+  await act(async () => {
+    await vi.waitFor(() =>
+      expect(container.textContent).toContain('Please check your email.'),
+    )
+  })
+  expect(container.textContent).toContain('Please check your password.')
+  expect(useAuthStore.getState().isAuthenticated).toBe(false)
+  expect(router.state.location.pathname).toBe('/login')
 })
 
 it('ignores storage changes when explicit tab synchronization is disabled', async () => {
@@ -494,16 +536,16 @@ it('ignores storage changes when explicit tab synchronization is disabled', asyn
     vi.mocked(AuthService.ME).mockClear()
     await remote('logout')
     expect(AuthService.ME).not.toHaveBeenCalled()
-    expect(useAuthStore.getState().user?.id).toBe('one')
+    expect(useAuthStore.getState().user?.id).toBe(1)
   } finally {
     env.VITE_AUTH_SYNC_TABS = enabled
   }
 })
 
-it('keeps the Retry screen after Axios refresh fails during a background session check', async () => {
+it('keeps the Retry screen after ME fails during a background session check', async () => {
   await mount('/users')
   vi.mocked(AuthService.ME).mockImplementation(realMe)
-  vi.mocked(AuthService.REFRESH).mockImplementation(realRefresh)
+
   let offline = true
   api.defaults.adapter = async (config) => {
     const reply = {
@@ -516,7 +558,7 @@ it('keeps the Retry screen after Axios refresh fails during a background session
     if (offline) {
       throw new AxiosError('server unavailable', undefined, config, undefined, {
         ...reply,
-        status: config.url?.endsWith('/refresh') ? 500 : 401,
+        status: 500,
       })
     }
     return reply
@@ -525,9 +567,9 @@ it('keeps the Retry screen after Axios refresh fails during a background session
     await queryClient.invalidateQueries({ queryKey: authKeys.me() })
   })
   expect(container.textContent).toContain('Unable to check your session')
-  expect(useAuthStore.getState().user?.id).toBe('one')
+  expect(useAuthStore.getState().user?.id).toBe(1)
   expect(router.state.location.pathname).toBe('/users')
   offline = false
   await click('Retry')
-  expect(container.textContent).toContain('Protected one')
+  expect(container.textContent).toContain('Protected 1')
 })

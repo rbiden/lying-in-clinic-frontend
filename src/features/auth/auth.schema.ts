@@ -1,5 +1,30 @@
 import type z from 'zod'
-import { zodEmail, zodEnum, zodObject, zodString } from '#/helpers/zod'
+import {
+  zodBoolean,
+  zodEmail,
+  zodEnum,
+  zodNumber,
+  zodObject,
+  zodString,
+} from '#/helpers/zod'
+
+export const AuthUserSchema = zodObject({
+  unknownKeys: 'strip',
+  shape: {
+    id: zodNumber({ min: 1, multipleOf: 1 }),
+    name: zodString({ trim: false }),
+    email: zodEmail({}),
+    role: zodEnum({ values: ['admin', 'staff'] }),
+    active: zodBoolean({}),
+  },
+})
+
+export const SessionResponseSchema = zodObject({
+  unknownKeys: 'strip',
+  shape: { data: AuthUserSchema },
+})
+
+export type AuthUser = z.infer<typeof AuthUserSchema>
 
 export const LoginSchema = zodObject({
   unknownKeys: 'strip',

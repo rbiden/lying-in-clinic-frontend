@@ -1,90 +1,87 @@
-import { z } from 'zod'
+import { Navigate, useLocation } from 'react-router'
 import { DataTable } from '@/components/datatable/DataTable'
 import { Filter } from '@/components/Filter'
-import { Select } from '@/components/Select'
+import { Input } from '@/components/Input'
 import { useTableQuery } from '@/hooks/use-table-query'
-import { useAuditLogsQuery } from '@/features/audit-logs/audit-logs.query'
-import type { AuditLog } from '@/features/audit-logs/audit-logs.service'
+import { useAuditLogsQuery } from '@/features/audit-logs'
+import type { AuditLog } from '@/features/audit-logs'
+import {
+  auditLogsFilterSchema,
+  cleanAuditLogsSearch,
+} from '@/features/audit-logs/audit-logs.schema'
 import type { DataTableColumn } from '@/types/datatable.types'
-import { getTableSortFields } from '#/helpers'
 
-const filterSchema = z.object({
-  action: z.enum(['POST', 'PATCH', 'DELETE']).optional(),
-  model: z.enum(['User', 'Product', 'Inventory']).optional(),
-})
 const defaultFilters = {}
+const sortFields: string[] = []
 
 const columns: DataTableColumn<AuditLog>[] = [
   {
-    accessorKey: 'createdAt',
-    enableSorting: true,
+    accessorKey: 'occurred_at',
     header: 'Time',
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleString(),
+    cell: ({ row }) =>
+      new Date(row.original.occurred_at).toLocaleString('en-PH', {
+        timeZone: 'Asia/Manila',
+      }),
   },
   {
-    id: 'user',
-    header: 'User',
-    enableSorting: true,
-    accessorFn: (log) =>
-      log.user?.fullName || log.user?.username || 'Unknown user',
+    accessorKey: 'actor_id',
+    header: 'Actor ID',
+    cell: ({ row }) => row.original.actor_id ?? 'Not recorded',
   },
-  { accessorKey: 'action', enableSorting: true, header: 'Action' },
-  { accessorKey: 'model', enableSorting: true, header: 'Model' },
+  { accessorKey: 'event', header: 'Event' },
+  {
+    accessorKey: 'subject_type',
+    header: 'Subject type',
+    cell: ({ row }) => row.original.subject_type ?? 'Not recorded',
+  },
+  {
+    accessorKey: 'subject_id',
+    header: 'Subject ID',
+    cell: ({ row }) => row.original.subject_id ?? 'Not recorded',
+  },
 ]
 
-export const AuditLogs = () => {
-  const sortFields = getTableSortFields(columns)
-
+const AuditLogsTable = () => {
   const table = useTableQuery({
     tableKey: 'audit-logs',
-    filterSchema,
+    filterSchema: auditLogsFilterSchema,
     defaultFilters,
     sortFields,
   })
 
   const { data, isLoading, isFetching, refetch, error } = useAuditLogsQuery(
-    table.params,
+    { page: table.state.page, limit: table.state.limit, ...table.filters },
     table.isReady,
   )
 
   return (
     <div>
+      <p className="mb-3 text-sm text-muted-foreground">
+        From and To include the whole UTC calendar date. Times are shown in
+        Asia/Manila.
+      </p>
       <Filter
         tableKey="audit-logs"
-        labels={{ action: 'Action', model: 'Model' }}
+        showSearch={false}
+        labels={{ event: 'Exact event', from: 'From', to: 'To' }}
         onRefetch={() => {
           void refetch()
         }}
         refetchLabel="Refresh"
         isLoading={isFetching}
       >
-        <Select
-          name="action"
-          label="Action"
-          options={[
-            { value: 'POST', label: 'Create' },
-            { value: 'PATCH', label: 'Update' },
-            { value: 'DELETE', label: 'Delete' },
-          ]}
-        />
-        <Select
-          name="model"
-          label="Model"
-          options={[
-            { value: 'User', label: 'User' },
-            { value: 'Product', label: 'Product' },
-            { value: 'Inventory', label: 'Inventory' },
-          ]}
-        />
+        <Input name="event" label="Exact event" maxLength={100} />
+        <Input name="from" label="From" type="date" />
+        <Input name="to" label="To" type="date" />
       </Filter>
 
       <DataTable
         caption="Audit logs"
         table={table}
-        rows={data?.data.items ?? []}
+        rows={data?.data ?? []}
         columns={columns}
-        totalCount={data?.data.pagination.total ?? 0}
-        getRowId={(log) => log.id}
+        totalCount={data?.meta.total ?? 0}
+        getRowId={(log) => String(log.id)}
         isLoading={!table.isReady || isLoading}
         isFetching={isFetching}
         error={error}
@@ -94,4 +91,15 @@ export const AuditLogs = () => {
       />
     </div>
   )
+}
+
+export const AuditLogs = () => {
+  const location = useLocation()
+  const search = cleanAuditLogsSearch(location.search)
+
+  if (search !== location.search) {
+    return <Navigate replace to={{ ...location, search }} />
+  }
+
+  return <AuditLogsTable />
 }

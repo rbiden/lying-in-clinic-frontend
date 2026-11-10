@@ -1,12 +1,6 @@
 import type { LucideIcon } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-export interface ApiResponse<T> {
-  success: boolean
-  message: string
-  data: T
-}
-
 export interface BaseClassNameProps {
   className?: string
   wrapperClassName?: string

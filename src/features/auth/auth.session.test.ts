@@ -17,10 +17,14 @@ import type { SessionResponse } from './auth.session'
 import { getSessionLoginUrl, getSessionReturnUrl } from './auth.redirect'
 
 const client = new QueryClient()
-const response = (id: string): SessionResponse => ({
-  success: true,
-  message: 'ok',
-  data: { user: { id, email: `${id}@example.com` } },
+const response = (id: number): SessionResponse => ({
+  data: {
+    id,
+    name: 'Test User',
+    email: 'test@example.com',
+    role: 'admin',
+    active: true,
+  },
 })
 
 beforeEach(() => {
@@ -35,28 +39,28 @@ afterEach(() => {
 })
 
 it('stores one ME response shape and clears the previous account cache on identity change', () => {
-  applySession(response('one'), useAuthStore.getState().version, client)
+  applySession(response(1), useAuthStore.getState().version, client)
   client.setQueryData(['private'], ['one-only'])
-  applySession(response('two'), useAuthStore.getState().version, client)
+  applySession(response(2), useAuthStore.getState().version, client)
   expect(client.getQueryData(['private'])).toBeUndefined()
-  expect(client.getQueryData(authKeys.me())).toEqual(response('two'))
+  expect(client.getQueryData(authKeys.me())).toEqual(response(2))
   expect(useAuthStore.getState()).toMatchObject({
     status: 'authenticated',
-    user: { id: 'two' },
+    user: { id: 2 },
   })
 })
 
 it('rejects stale session commits after logout and retains known users on temporary failures', () => {
-  applySession(response('one'), useAuthStore.getState().version, client)
+  applySession(response(1), useAuthStore.getState().version, client)
   handleSessionFailure(new Error('offline'), client)
   expect(useAuthStore.getState()).toMatchObject({
     status: 'error',
     isAuthenticated: true,
-    user: { id: 'one' },
+    user: { id: 1 },
   })
   const obsoleteRevision = useAuthStore.getState().version
   endSession('logout', client)
-  applySession(response('one'), obsoleteRevision, client)
+  applySession(response(1), obsoleteRevision, client)
   expect(useAuthStore.getState()).toMatchObject({
     status: 'unauthenticated',
     user: null,
@@ -71,7 +75,7 @@ it('sends only a unique change ID and reason and never echoes remote logout', ()
   expect(Object.keys(JSON.parse(first)).sort()).toEqual(['id', 'reason'])
   publishSessionChange('login')
   expect(window.localStorage.getItem(SESSION_STORAGE_KEY)).not.toBe(first)
-  useAuthStore.getState().setAuth(response('one').data.user)
+  useAuthStore.getState().setAuth(response(1).data)
   invalidateSessionWork(client)
   const before = window.localStorage.getItem(SESSION_STORAGE_KEY)
   endSession('logout', client, false)

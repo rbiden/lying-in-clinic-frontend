@@ -1,31 +1,18 @@
 import { api } from '@/lib/axios'
-import type { ApiResponse, QueryParams } from '@/types'
-
-export interface AuditLog {
-  id: string
-  userId: string | null
-  model: string
-  action: string
-  createdAt: string
-  user: { id: string; username: string; fullName: string } | null
-}
-
-export interface AuditLogsPage {
-  items: AuditLog[]
-  pagination: Required<Pick<QueryParams, 'page' | 'limit'>> & {
-    total: number
-    totalPages: number
-  }
-}
+import type { PaginateResponse } from '@/types'
+import type { AuditLog, AuditLogsParams } from './audit-logs.types'
 
 export const AuditLogsService = {
-  GET_ALL: async (params: QueryParams = {}) => {
-    const response = await api.get<ApiResponse<AuditLogsPage>>(
-      '/v1/audit-logs',
-      {
-        params,
+  GET_ALL: async ({ page, limit, from, to, event }: AuditLogsParams = {}) => {
+    const response = await api.get<PaginateResponse<AuditLog>>('/audit-logs', {
+      params: {
+        ...(page !== undefined && { page }),
+        ...(limit !== undefined && { per_page: limit }),
+        ...(from !== undefined && { from }),
+        ...(to !== undefined && { to }),
+        ...(event !== undefined && { event }),
       },
-    )
+    })
     return response.data
   },
 }

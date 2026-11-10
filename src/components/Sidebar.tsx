@@ -1,11 +1,10 @@
 import { Link, matchPath, useLocation } from 'react-router'
-import { Baby, LayoutDashboard, LogOut } from 'lucide-react'
+import { Baby, LayoutDashboard, Loader2, LogOut } from 'lucide-react'
 import { useAuthStore, useLogoutMutation } from '@/features/auth'
 import { authRoutes } from '#/features/auth/auth.routes'
 import { getSidebarItems } from '#/routes/sidebar'
 import { Button } from './ui/Button'
 import { useMutationTools } from '#/hooks'
-import { toast } from 'sonner'
 import {
   Sidebar as SidebarPrimitive,
   SidebarContent,
@@ -24,6 +23,7 @@ import {
 import { cn } from 'cn'
 import { Tooltip } from './Tooltip'
 import { userRoutes } from '#/features/users/users.routes'
+import { brand } from '#/lib/brand'
 
 const sidebarItems = getSidebarItems([...authRoutes, ...userRoutes])
 
@@ -36,11 +36,8 @@ export const Sidebar = () => {
     useLogoutMutation()
 
   const handleLogout = async () => {
-    const { success, message } = await safeMutate(logoutApi)
-
-    if (!success) return toast.error(message)
-
-    setOpenMobile(false)
+    void (await safeMutate(logoutApi))
+    window.location.reload()
   }
 
   return (
@@ -50,11 +47,11 @@ export const Sidebar = () => {
           to="/"
           onClick={() => setOpenMobile(false)}
           className="flex items-center gap-3 rounded-xl p-2 focus-visible:outline-ring group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0"
-          aria-label="Inventory Management System home"
+          aria-label={`${brand.name} home`}
         >
           <Baby className="size-5 shrink-0 text-primary" aria-hidden="true" />
           <span className="text-base font-heading font-bold group-data-[collapsible=icon]:hidden">
-            Inventory
+            {brand.shortName}
           </span>
         </Link>
       </SidebarHeader>
@@ -62,7 +59,7 @@ export const Sidebar = () => {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="group-data-[collapsible=icon]:hidden">
-            Workspace
+            {brand.workspaceLabel}
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <nav
@@ -142,7 +139,7 @@ export const Sidebar = () => {
           aria-label={isAuthenticated ? 'Logout' : 'Login'}
           title={isAuthenticated ? 'Logout' : 'Login'}
         >
-          <LogOut />
+          {isLogoutLoading ? <Loader2 /> : <LogOut />}
           <span className="group-data-[collapsible=icon]:hidden">
             {isLogoutLoading ? 'Logging out...' : 'Logout'}
           </span>

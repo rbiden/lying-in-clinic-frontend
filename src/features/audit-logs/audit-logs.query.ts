@@ -1,12 +1,15 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { AuditLogsService } from './audit-logs.service'
-import type { QueryParams } from '@/types'
+import type { AuditLogsParams } from './audit-logs.types'
 
 export const AUDIT_LOGS_QUERY_KEYS = {
-  all: (params: QueryParams = {}) => ['audit-logs', params] as const,
+  all: (params: AuditLogsParams = {}) => ['audit-logs', params] as const,
 }
 
-export function useAuditLogsQuery(params: QueryParams = {}, enabled = true) {
+export function useAuditLogsQuery(
+  params: AuditLogsParams = {},
+  enabled = true,
+) {
   return useQuery({
     queryKey: AUDIT_LOGS_QUERY_KEYS.all(params),
     queryFn: () => AuditLogsService.GET_ALL(params),

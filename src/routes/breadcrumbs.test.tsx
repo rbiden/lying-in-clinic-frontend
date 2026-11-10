@@ -14,9 +14,13 @@ vi.mock('#/components/Sidebar', () => ({ Sidebar: () => null }))
 beforeEach(() => {
   vi.stubGlobal('IS_REACT_ACT_ENVIRONMENT', true)
   useBreadcrumbStore.setState({ labels: {}, owners: {} })
-  useAuthStore
-    .getState()
-    .setAuth({ id: 'breadcrumb-test', email: 'test@example.com' })
+  useAuthStore.getState().setAuth({
+    id: 1,
+    name: 'Breadcrumb Test',
+    email: 'test@example.com',
+    role: 'admin',
+    active: true,
+  })
 })
 afterEach(() => {
   useAuthStore.setState(useAuthStore.getInitialState())

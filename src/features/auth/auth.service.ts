@@ -1,53 +1,36 @@
-import { api } from '@/lib/axios'
-import type { AuthUser } from '../../routes/types'
+import { CanceledError, isAxiosError } from 'axios'
+import { api, initializeCsrf } from '@/lib/axios'
+import { useAuthStore } from './auth.store'
+import { SessionResponseSchema } from './auth.schema'
 import type { LoginDto } from './auth.schema'
-import type { ApiResponse } from '#/types'
-
-export interface CurrentUser {
-  id: string
-  email: string
-  role: string
-  fullName?: string
-}
+import type { SessionResponse } from './auth.session'
 
 export const AuthService = {
-  LOGIN: async (
-    credentials: LoginDto,
-  ): Promise<ApiResponse<{ user: AuthUser }>> => {
-    const response = await api.post<ApiResponse<{ user: AuthUser }>>(
-      '/v1/auth/login',
-      credentials,
-    )
+  LOGIN: async (credentials: LoginDto): Promise<SessionResponse> => {
+    const version = useAuthStore.getState().version
+    await initializeCsrf(version)
 
-    return response.data
+    const response = await api.post('/login', credentials)
+
+    if (version !== useAuthStore.getState().version)
+      throw new CanceledError('Session changed')
+
+    return SessionResponseSchema.parse(response.data)
   },
 
-  REFRESH: async (): Promise<ApiResponse<{ user: AuthUser }>> => {
-    const response = await api.post<ApiResponse<{ user: AuthUser }>>(
-      '/v1/auth/refresh',
-      {},
-    )
-
-    return response.data
+  ME: async (signal?: AbortSignal): Promise<SessionResponse> => {
+    const response = await api.get('/me', { signal })
+    return SessionResponseSchema.parse(response.data)
   },
 
-  ME: async (
-    signal?: AbortSignal,
-  ): Promise<ApiResponse<{ user: AuthUser }>> => {
-    const response = await api.get<ApiResponse<{ user: AuthUser }>>(
-      '/v1/auth/me',
-      { signal },
-    )
+  LOGOUT: async (): Promise<void> => {
+    const version = useAuthStore.getState().version
+    await initializeCsrf(version)
 
-    return response.data
-  },
-
-  LOGOUT: async (): Promise<ApiResponse<{ message: string }>> => {
-    const response = await api.post<ApiResponse<{ message: string }>>(
-      '/v1/auth/logout',
-      {},
-    )
-
-    return response.data
+    try {
+      await api.post('/logout', {})
+    } catch (error) {
+      if (!isAxiosError(error) || error.response?.status !== 401) throw error
+    }
   },
 }

@@ -270,3 +270,29 @@ These are code observations, not newly approved architecture decisions:
 - User approved `docs/plans/backend-auth-session-alignment.md` on 2026-11-10. Implement exact Laravel resource and error envelopes, no refresh endpoint, 204 logout, CSRF/session reconciliation on protected 419 without replaying mutations, numeric feature-owned users and cycle-safe explicit feature barrels.
 - Scope includes ErrorState, spinner LoadingState, skeleton PendingState (modal/card/page), and EmptyState, using shadcn and Tailwind. Bounded adoption is auth wrappers and DataTable defaults, preserving table override slots and the existing Empty API.
 - Confirmed loading direction: branded vertical status with a static clinic icon above the heading and a small spinner beside status text below, removing the rotating logo ring and glows. Compact table/inline loading remains spinner-and-text without forced branding.
+
+### Backend Alignment Implementation (2026-11-11)
+
+- Supersedes the earlier speculative auth-envelope normalizer and refresh flow: parse only Laravel UserResource data, numeric IDs, strict role/active fields; use Sanctum CSRF + cookie sessions with no replay.
+- Protected 419s share one CSRF/ME reconciliation per version. An unresolved CSRF prerequisite blocks both new ME work and obsolete in-flight ME responses, retaining Retry after bootstrap failure. Regression covers late focus ME following failed CSRF.
+- UI keeps the Quiet Ward light theme, Nunito/Fraunces and compact semantic tokens (ENERGY 1 / RHYTHM 1 / MOTION 1). Static Baby mark identifies the clinic; the separate spinner alone communicates ongoing work. No new decorative visual system.
+- Isolated feedback preview uses explicitly synthetic audit data and is outside application routing and the production entry point. Browser host/pipe unavailable; rendered checks remain pending rather than inferred from DOM tests.
+
+### Login Reference Recreation (2026-11-11)
+
+- Use the supplied transparent baby image directly as a Vite asset; no image transformation or replacement generation is required.
+- Match the reference with a muted outer surround, white rectangular canvas, widely spaced CLINIC wordmark, and offset soft shadow on the existing form card. Keep existing fields, schema, submit action and backend validation; replace remaining POS copy with clinic wording.
+- Under 768px, place the cutout at the bottom with reserved space beneath the form. Do not invent navigation or registration/reset actions absent from the current application.
+- Styling correction: replace Login.css with equivalent responsive Tailwind utilities in Login.tsx, preserving the user's desktop image-height adjustment to 100%.
+
+### Split Login Redesign (2026-11-11)
+
+- Mirror the new supplied reference: white left form panel with clinic brand, welcome heading, email/password and Sign in; rounded right photograph panel with readable clinic copy over a dark gradient.
+- Use login-background.png directly; show the image below the form on narrow screens. Preserve the existing FormCard/Input and login handler/schema/422 errors. Reference Google, registration, remember-me and reset controls have no existing supported flows and are not introduced.
+- Fullscreen revision: the photograph now spans the whole login wrapper, canceling RootLayout's existing padding locally. The left section becomes an inset, opaque rounded white panel with a semantic border; photo copy remains on the exposed background to the right or below on mobile.
+
+### Configurable Branding (2026-11-11)
+
+- Centralize public labels through validated VITE_APP_NAME/VITE_BRAND_* settings and a narrow src/lib/brand.ts consumer object. Keep existing values as centralized defaults; optional sidebar short name and copyright owner derive from the app name.
+- Browser title is rendered through a Vite HTML transform using the same default app name, with HTML escaping. Quote env values and use a double-quoted newline escape for multiline taglines. Restart dev/rebuild after changes.
+- Replace legacy Inventory sidebar labels and login copy only; preserve current user form/layout edits and clinical feature terminology. Brand artwork, favicon and background photography remain source assets; this request covers labels.
